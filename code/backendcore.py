@@ -39,6 +39,9 @@ def check_sample_list(filepath):
         return boolvalue, None
 
 
+
+
+from pm4py.objects.log.importer.xes import factory as xes_importer
 def build_sequences(logfile):
     ''' 
     Converts the input log into list of lists with trace id followed by list of activites.
