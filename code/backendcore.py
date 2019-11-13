@@ -37,3 +37,21 @@ def check_sample_list(filepath):
         return boolvalue, res
     else:
         return boolvalue, None
+
+
+def build_sequences(logfile):
+    ''' 
+    Converts the input log into list of lists with trace id followed by list of activites.
+    list[0] - Trace id
+    list[1] - List of events
+    
+    input: XES log file path
+    
+    output: List
+    '''
+    sequence = []
+    log = xes_importer.import_log(logfile)
+    
+    for trace in log:
+        sequence.append([trace.attributes['concept:name'],[event['concept:name'] for event in trace]])
+    return sequence
