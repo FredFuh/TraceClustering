@@ -1,5 +1,5 @@
 from pm4py.objects.log.importer.xes import factory as xes_importer
-from sequenceDB import *
+from sequenceDB import log_to_sdb
 from mine_fsp_closed import mine_fsp_closed
 
 def mine_fsp(log_path, min_sup):
@@ -22,4 +22,4 @@ def mine_fsp(log_path, min_sup):
 
 # placeholder
 def mine_fsp_2(sdb, min_sup):
-    return dict()
+    return []
