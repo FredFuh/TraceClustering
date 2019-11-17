@@ -2,8 +2,6 @@ from sequenceDB import SequenceDB
 from enum import Enum
 
 # Mining closed frequent items sets using a slightly simplified version of the CloFAST algorithm, due to abusing the fact that our itemsets are always of cardinality 1.
-
-# placeholder
 def mine_fsp_closed(sdb, min_sup):
     ''' 
     Mines the frequent sequent patterns (fsp's) of length 1 and the closed fsp's for the given SequenceDB. A simplified version of the algorithm CloFAST is implemented,
@@ -32,7 +30,7 @@ def mine_fsp_closed(sdb, min_sup):
         if sup >= min_sup:
             cfi.append(([act], sup))
     
-    cset_root = Node([], None)   # root node does not need a meaningful vertical id list
+    cset_root = Node([], [])   # root node does not need a meaningful vertical id list
 
     # A vertical id list (vil) is of type [int], indexed by sequence indices
     # No data structure to remember all vil's, just saved in each node
@@ -46,7 +44,7 @@ def mine_fsp_closed(sdb, min_sup):
         cset_root.add_child(node)
     
     for child in cset_root.get_children():
-        sequence_extension(child, min_sup)
+        sequence_extension(child, min_sup, sils)
 
     cfsp = []
     get_closed_fsp_from_cset(cset_root, cfsp)
@@ -116,16 +114,54 @@ def vil_compute_support(vil):
     return sum(1 for id in vil if id is not None)
 
 def get_closed_fsp_from_cset(node, lst):
-    lst.append((node.seq, vil_compute_support(node.vil)))
+    if node.label is Label.CLOSED:
+        lst.append((node.seq, vil_compute_support(node.vil)))
     for child in node.get_children():
         get_closed_fsp_from_cset(child, lst)
 
 #stub
-def sequence_extension(node, min_sup):
+def sequence_extension(node, min_sup, sils):
     check_closure_and_prune(node)
     if node.label is Label.PRUNED:
         return
-    return
+
+    vil_node = node.vil
+    siblings = node.parent.get_children()
+    for u in siblings:
+        vil_u = u.vil
+        last_act = u.seq[-1]
+        vil_new = [None] * len(vil_node)
+
+        # S-Step
+        for j in range(len(vil_node)):
+            if (vil_node[j] is not None) and (vil_u[j] is not None):
+                # If id lists in the sils are long (i.e. same activities appear often in one trace), index() might be inefficient
+                sil_idx = sils[last_act][j].index(vil_u[j])   # that index must exist
+                new_id = None
+                for id in sils[last_act][j][sil_idx:]:
+                    if id > vil_node[j]:
+                        new_id = id
+                        break
+                vil_new[j] = new_id
+            # else: vil_new[j] = None, i.e. do nothing because pre initialised with None
+        
+        # Possible optimisation: compute support during S-Step, not done to increase readability
+        supp = vil_compute_support(vil_new)
+        if supp >= min_sup:
+            if supp == vil_compute_support(vil_node):
+                node.set_label(Label.NONCLOSED)
+            # create new cset node
+            seq_new = node.seq.copy()
+            seq_new.append(last_act)
+            node_new = Node(seq_new, vil_new)
+            node_new.set_label(Label.CLOSED)
+            node_new.parent = node
+            node.children.append(node_new)
+    
+    for child in node.children:
+        sequence_extension(child, min_sup, sils)
+    
+    # Possible optimisation: add self to output list of closed fsp's if the label is still closed
 
 #stub
 def check_closure_and_prune(node):
