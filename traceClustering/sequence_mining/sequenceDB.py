@@ -2,8 +2,6 @@
 # Introduce its own class mainly to bookkeep information about mapping from activities to indices
 # the sequence database retains order of the traces from the log, thus no need to remember case id's
 
-from pm4py.objects.log.importer.xes import factory as xes_importer
-
 class SequenceDB:
     def __init__(self):
         self.db = []
@@ -28,43 +26,42 @@ class SequenceDB:
         self.db = [[self.activity_to_idx[act] for act in trace] for trace in tracelist]
 
 
-def log_to_tracelist(log_path):
+def log_to_tracelist(log):
     ''' 
-    Converts the input XES event log into a list of list of activities corresponding to traces in the log
+    Converts the input EventLog into a list of list of activities corresponding to traces in the log.
     
-    input: XES log file path
+    input: pm4py EventLog object
     
     output: [[String]]
     '''
-    log = xes_importer.import_log(log_path)
     tracelist = [[event['concept:name'] for event in trace] for trace in log]
     
     return tracelist
 
-def log_to_sdb(log_path):
+def log_to_sdb(log):
     ''' 
-    Converts the input XES event log into a SequenceDB object, which stores the sequence database as [[Int]]
+    Converts the input EventLog into a SequenceDB object, which stores the sequence database as [[Int]].
     
-    input: XES log file path
+    input: pm4py EventLog object
     
     output: SequenceDB object
     '''
-    tracelist = log_to_tracelist(log_path)
+    tracelist = log_to_tracelist(log)
     sdb = SequenceDB()
     sdb.initialise_db(tracelist)
 
     return sdb
 
-def apply_sdb_mapping_to_log(log_path, sdb):
+def apply_sdb_mapping_to_log(log, sdb):
     '''
     Applies the mapping from activities to indices of the given SequenceDB to an event log.
     If the log contains an activity not known to the SequenceDB, it is assigned the index -1.
 
-    input: XES log file path, SequenceDB object
+    input: pm4py EventLog object, SequenceDB object
 
     output: [[Int]]
     '''
-    tracelist = log_to_tracelist(log_path)
+    tracelist = log_to_tracelist(log)
     db = [[sdb.activity_to_idx.get(act, -1) for act in trace] for trace in tracelist]
 
     return db
