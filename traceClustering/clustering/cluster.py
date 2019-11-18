@@ -1,0 +1,2 @@
+# Provide functionality here, for a given pm4py EventLog object and set of frequent sequences in integer representation to compute the scores and finally cluster(s)
+# Potentially handle multiple sample sets given by sample_log module
