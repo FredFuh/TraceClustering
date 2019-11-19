@@ -119,14 +119,13 @@ def get_closed_fsp_from_cset(node, lst):
     for child in node.get_children():
         get_closed_fsp_from_cset(child, lst)
 
-#stub
 def sequence_extension(node, min_sup, sils):
-    check_closure_and_prune(node)
+    check_closure_and_prune(node, sils)
     if node.label is Label.PRUNED:
         return
 
     vil_node = node.vil
-    siblings = node.parent.get_children()
+    siblings = node.parent.get_children()   # I think siblings should also include the node itself, word might be misleading
     for u in siblings:
         vil_u = u.vil
         last_act = u.seq[-1]
@@ -151,7 +150,7 @@ def sequence_extension(node, min_sup, sils):
             if supp == vil_compute_support(vil_node):
                 node.set_label(Label.NONCLOSED)
             # create new cset node
-            seq_new = node.seq.copy()
+            seq_new = node.seq[:]
             seq_new.append(last_act)
             node_new = Node(seq_new, vil_new)
             node_new.set_label(Label.CLOSED)
@@ -164,5 +163,64 @@ def sequence_extension(node, min_sup, sils):
     # Possible optimisation: add self to output list of closed fsp's if the label is still closed
 
 #stub
-def check_closure_and_prune(node):
-    pass
+def check_closure_and_prune(node, sils):
+    # Note that itemset closure does not need to be checked in our case, since all itemsets are of size 1 in the sequences and thus there are no proper supersets
+    vils = []
+    vils.insert(0,node.vil)
+    n_p = node.parent
+    while n_p is not None:   # iterate up to the root node, then in that iteration the parent of root is None
+        vil_p = n_p.vil
+        children = n_p.children
+        for u in children:   # I think siblings without node itself should be fine here, but following paper
+            vil_u = u.vil
+            pred, virt_shift = sequence_closure(vil_u, vils, sils, node.seq)
+            if pred:
+                if virt_shift:
+                    node.set_label(Label.PRUNED)
+                else:
+                    node.set_label(Label.NONCLOSED)
+                return
+        vils.insert(0,vil_p)
+        n_p = n_p.parent
+    return
+
+
+def sequence_closure(vil, vil_list, sils, alpha):
+    pred = True
+    virt_shift = False
+    vil_alpha = vil_list[-1]
+    a_i_idx = len(alpha) - len(vil_list)
+    # Compute the suffix starting from the i-th activity a_i of alpha for the shiftSC predicate check to always have a_i available
+    alpha_suffix = alpha[a_i_idx:]
+    for j in range(len(vil_alpha)):
+        if vil_alpha[j] is None:
+            continue
+        else:
+            pred_j, shifted = shiftSC(vil[j], [vil_l[j] for vil_l in vil_list], sils, alpha_suffix, j)
+            if not pred_j:
+                pred = False
+                break
+            virt_shift = max(virt_shift, shifted)   # if virt_shift was True already then keep it True
+
+    return pred, virt_shift
+
+def shiftSC(vilj, vilj_list, sils, alpha_suffix, j):
+    shifted = False
+    if (vilj is None) or (len(vilj_list) == 0):
+        return False, shifted
+    elif (vilj_list[0] is not None) and (vilj < vilj_list[0]):
+        return True, shifted
+    else:
+        shifted = True
+        vilj_delta = vilj_list[0]
+        a_i = alpha_suffix[0]
+        # Since vilj >= vilj_delta holds here, we can start looking in the sil of a_i starting from after the number saved in vilj_delta, don't need to check all sil entries
+        sil_idx = sils[a_i][j].index(vilj_delta)
+        for t_a_i in sils[a_i][j][sil_idx+1:]:
+            # look for t_a_i larger than vilj (gamma)
+            if (t_a_i > vilj):
+                sub_pred, _ = shiftSC(t_a_i, vilj_list[1:], sils, alpha_suffix[1:], j)
+                if sub_pred:
+                    return True, shifted
+        # If loop finished without returning true, then no t_a_i was found, thus predj is false; Also note that the shifted boolean value is not of importance if the predicate is false
+        return False, False
