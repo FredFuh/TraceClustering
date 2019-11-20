@@ -66,7 +66,7 @@ def build_sils(db, num_activities):
 
     '''
     # In contrast to the paper, the sil's store indices of activities (0 indexed) and not positions which start at 1
-    # Initialise the id-list for every activity as a list of None for each sequence (referred to as null in the paper), not using [] instead of None to save memory if the sil is sparse
+    # Initialise the id-list for every activity as a list of None for each sequence (referred to as null in the paper), using None instead of [] to save memory if the sil is sparse
     sils = [[None for i in range(len(db))] for act in range(num_activities)]
     for idx_seq in range(len(db)):
         seq = db[idx_seq]
@@ -162,7 +162,6 @@ def sequence_extension(node, min_sup, sils):
     
     # Possible optimisation: add self to output list of closed fsp's if the label is still closed
 
-#stub
 def check_closure_and_prune(node, sils):
     # Note that itemset closure does not need to be checked in our case, since all itemsets are of size 1 in the sequences and thus there are no proper supersets
     vils = []
