@@ -54,7 +54,7 @@ def log_to_sdb(log):
 
 def apply_sdb_mapping_to_log(log, sdb):
     '''
-    Applies the mapping from activities to indices of the given SequenceDB to an event log.
+    Applies the mapping from activities to indices of the given SequenceDB to an event log, and returns it as a list of sequences of activity indices.
     If the log contains an activity not known to the SequenceDB, it is assigned the index -1.
 
     input: pm4py EventLog object, SequenceDB object
@@ -63,5 +63,6 @@ def apply_sdb_mapping_to_log(log, sdb):
     '''
     tracelist = log_to_tracelist(log)
     db = [[sdb.activity_to_idx.get(act, -1) for act in trace] for trace in tracelist]
+    # Maybe filter out -1 activities here
 
     return db

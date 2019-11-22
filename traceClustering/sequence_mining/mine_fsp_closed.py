@@ -13,7 +13,7 @@ def mine_fsp_closed(sdb, min_sup):
         min_sup (int): The absolute minimum support of a frequent sequence pattern
     
     Returns:
-        [([int], int)], [([int], int)]: Returns two list of tuples, representing the fsp's of length 1 and the closed ones. A tuple's first entry is the fsp, while the second is the absolute support.
+        [((int), int)], [((int), int)]: Returns two list of tuples, representing the fsp's of length 1 and the closed ones. A tuple's first entry is the fsp which is a tuple, while the second is the absolute support.
     '''
     # First build up the sparse id lists (sil) for all 1-itemsets, organised as [[Int]] where an activity index serves as the index to its id list in the sil
     # In contrast to the paper, the sil's store indices of activities (0 indexed) and not positions which start at 1
@@ -28,7 +28,7 @@ def mine_fsp_closed(sdb, min_sup):
         # count the number of sequences where the list of id's is not None
         sup = sum(1 for k in range(len(sils[act])) if sils[act][k])
         if sup >= min_sup:
-            cfi.append(([act], sup))
+            cfi.append(((act,), sup))
     
     cset_root = Node([], [])   # root node does not need a meaningful vertical id list
 
@@ -150,8 +150,7 @@ def sequence_extension(node, min_sup, sils):
             if supp == vil_compute_support(vil_node):
                 node.set_label(Label.NONCLOSED)
             # create new cset node
-            seq_new = node.seq[:]
-            seq_new.append(last_act)
+            seq_new = (*node.seq, last_act)
             node_new = Node(seq_new, vil_new)
             node_new.set_label(Label.CLOSED)
             node_new.parent = node
