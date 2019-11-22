@@ -4,6 +4,8 @@ import csv
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.objects.log.exporter.xes import factory as xes_exporter
 from pm4py.objects.log.log import EventLog
+
+
 # Provide functions here for input event log and csv file path to return a pm4py EventLog object which only contains traces from the sample list
 # Potentially already implement to generate multiple sample sets if csv file contains information for multiple clusters
 
@@ -126,10 +128,9 @@ def create_sample_logs(clus_dict, filepath):
 
     for key,value in clus_dict.items():
         args = {'attributes': log.attributes, 'extensions': log.extensions, 'omni_present': log.omni_present, 'classifiers': log.classifiers}
-        samplelog = TraceLog(**args)
+        samplelog = EventLog(**args)
         goalpath = filepath[:-4] + "_" + key + ".xes"
         for trace in log:
             if trace.attributes['concept:name'] in value:
                 samplelog.append(trace)
-        
         xes_exporter.export_log(samplelog, goalpath)
