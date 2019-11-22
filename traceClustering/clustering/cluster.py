@@ -1,14 +1,12 @@
 # Provide functionality here, for a given pm4py EventLog object and set of frequent sequences in integer representation to compute the scores and finally cluster(s)
 # Potentially handle multiple sample sets given by sample_log module
 
-
 from copy import deepcopy
 from math import ceil
 from pm4py.objects.log.log import EventLog
 from traceClustering.sequence_mining.sequenceDB import apply_sdb_mapping_to_log
 from traceClustering.sequence_mining.mine_fsp import mine_fsp_from_sample
 from traceClustering.sequence_mining.mine_fsp_closed import build_sils, get_first_item_or_none
-
 
 def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo):
     ''' 
@@ -35,15 +33,18 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo):
 
     clustered_sublogs = []
     num_clusters = len(sample_logs)
+    clustercsvlist = []
 
     for cluster in range(1,num_clusters+1):
+        csvcluster = []
         clustering = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup_abs, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
-        apply_clustering_to_log(log, clustering, cluster_label=cluster)
+        apply_clustering_to_log(log, clustering, csvcluster, cluster_label=cluster)
         sublog, unclustered_log = split_log_on_cluster_attribute(unclustered_log)
         clustered_sublogs.append(sublog)
+        clustercsvlist[cluster] = csvcluster
 
     concat_logs(clustered_sublogs)
-    return clustered_sublogs[0]
+    return clustered_sublogs[0], csvcluster
 
 # Returns an array of 0-1 values, 1 means the trace at that index of the array is in the cluster
 def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thresh_clo):
@@ -54,10 +55,12 @@ def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thr
 
     return clustering
 
-def apply_clustering_to_log(log, clustering, cluster_label):
+def apply_clustering_to_log(log, clustering, csvcluster, cluster_label):
+
     for i in range(len(log)):
         if clustering[i]:
             log[i].attributes['cluster'] = cluster_label
+            csvcluster.append([log[i].attributes['concept:name'], cluster_label])
 
 def split_log_on_cluster_attribute(log):
     # Insert traces where cluster attribute is nonzero into log1, rest into log2
