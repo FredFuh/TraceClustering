@@ -1,5 +1,6 @@
 from sequenceDB import log_to_sdb
 from mine_fsp_closed import mine_fsp_closed, get_first_item_or_none, build_sils, vil_compute_support
+from pm4py.objects.log.log import EventLog
 from math import ceil
 
 def mine_fsp(log, min_sup):
@@ -9,7 +10,7 @@ def mine_fsp(log, min_sup):
     
     input: pm4py EventLog object, min_sup (absolute)
     
-    output: (fsp_1, fsp_2, fsp_c)
+    output: (fsp_1, fsp_2, fsp_c, sdb)
     '''
     
     sdb = log_to_sdb(log)
@@ -18,7 +19,7 @@ def mine_fsp(log, min_sup):
     fsp_1, fsp_c = mine_fsp_closed(sdb, min_sup)
     fsp_2 = mine_fsp_2(sdb, min_sup)
 
-    return fsp_1, fsp_2, fsp_c
+    return fsp_1, fsp_2, fsp_c, sdb
 
 def mine_fsp_2(sdb, min_sup):
 
@@ -55,7 +56,7 @@ def mine_fsp_2(sdb, min_sup):
         for act2 in freq_act:
             sup = vil_compute_support(vil_2[act][act2])
             if sup >= min_sup:
-                fsp_2.append(([act, act2], sup))
+                fsp_2.append(((act, act2), sup))
 
     return fsp_2
 
@@ -70,6 +71,6 @@ def get_first_larger_element_or_none(lst, bound):
 
 def mine_fsp_from_sample(log, min_sup, training_set_fraction=0.5):
     training_set_size = ceil(len(log)*training_set_fraction)
-    training_log = log[:training_set_size]
+    training_log = EventLog(log[:training_set_size])
 
     return mine_fsp(training_log, min_sup)
