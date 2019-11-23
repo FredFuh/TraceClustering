@@ -69,7 +69,7 @@ def get_first_larger_element_or_none(lst, bound):
                 return item
     return None
 
-def mine_fsp_from_sample(log, min_sup, training_set_fraction=0.5):
+def mine_fsp_from_sample(log, min_sup, training_set_fraction=0.33):
     training_set_size = ceil(len(log)*training_set_fraction)
     training_log = EventLog(log[:training_set_size])
 

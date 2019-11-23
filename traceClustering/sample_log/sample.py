@@ -82,7 +82,7 @@ def check_sample_list(filepath, seq):
     complete_caseids = ""
     missing_cases = []
     
-    for key,value in seq.items():
+    for key,_ in seq.items():
         complete_caseids = complete_caseids + " " + str(key)
         
     with open(filepath) as csv_file:
@@ -116,7 +116,8 @@ def create_sample_log(logpath, samplelist, goalpath):
                 samplelog.append(trace)
         xes_exporter.export_log(samplelog, goalpath)
 '''
-def create_sample_logs(clus_dict, filepath):
+
+def write_sample_logs_to_fs(clus_dict, filepath):
     """
     Build separate logs with traces corresponding to each cluster
     
@@ -134,3 +135,23 @@ def create_sample_logs(clus_dict, filepath):
             if trace.attributes['concept:name'] in value:
                 samplelog.append(trace)
         xes_exporter.export_log(samplelog, goalpath)
+
+def create_sample_logs(clus_dict, filepath):
+    """
+    Build separate logs with traces corresponding to each cluster
+    
+    Input: Dictionary output of check_sample_list(), XES log filepath
+    
+    Output: List of sample logs as EventLog objects, each trace contains attribute 'original_log_idx' which saves the index of the trace in t
+    """
+    log = xes_importer.import_log(filepath)
+    sample_logs = []
+
+    for _,value in clus_dict.items():
+        args = {'attributes': log.attributes, 'extensions': log.extensions, 'omni_present': log.omni_present, 'classifiers': log.classifiers}
+        samplelog = EventLog(**args)
+        for idx in len(log):
+            if log[idx].attributes['concept:name'] in value:
+                samplelog.append(log[idx])
+                samplelog[-1]['original_log_idx'] = idx
+        sample_logs.append(samplelog)
