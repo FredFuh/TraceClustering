@@ -23,6 +23,7 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo):
     
     Returns:
         EventLog: The event log containing cluster information
+        [(str, int)]: List of case id's and the cluster they belong to
     '''
     # Do not destroy input log
     unclustered_log = deepcopy(log)
@@ -60,12 +61,15 @@ def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thr
 
     return clustering
 
-def apply_clustering_to_log(log, clustering, csvcluster, cluster_label):
+def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
+    pass
 
+
+def apply_clustering_to_log(log, clustering, csvcluster, cluster_label):
     for i in range(len(log)):
         if clustering[i]:
             log[i].attributes['cluster'] = cluster_label
-            csvcluster.append([log[i].attributes['concept:name'], cluster_label])
+            csvcluster.append((log[i].attributes['concept:name'], cluster_label))
 
 def split_log_on_cluster_attribute(log):
     # Insert traces where cluster attribute is nonzero into log1, rest into log2

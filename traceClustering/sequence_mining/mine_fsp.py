@@ -1,5 +1,5 @@
-from sequenceDB import log_to_sdb
-from mine_fsp_closed import mine_fsp_closed, get_first_item_or_none, build_sils, vil_compute_support
+from traceClustering.sequence_mining.sequenceDB import log_to_sdb
+from traceClustering.sequence_mining.mine_fsp_closed import mine_fsp_closed, get_first_item_or_none, build_sils, vil_compute_support
 from pm4py.objects.log.log import EventLog
 from math import ceil
 
