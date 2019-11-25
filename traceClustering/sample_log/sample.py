@@ -4,6 +4,7 @@ import csv
 from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.objects.log.exporter.xes import factory as xes_exporter
 from pm4py.objects.log.log import EventLog
+from copy import deepcopy
 
 
 # Provide functions here for input event log and csv file path to return a pm4py EventLog object which only contains traces from the sample list
@@ -133,7 +134,7 @@ def write_sample_logs_to_fs(clus_dict, filepath):
         goalpath = filepath[:-4] + "_" + key + ".xes"
         for trace in log:
             if trace.attributes['concept:name'] in value:
-                samplelog.append(trace)
+                samplelog.append(deepcopy(trace))
         xes_exporter.export_log(samplelog, goalpath)
 
 def create_sample_logs(clus_dict, filepath):
@@ -152,8 +153,8 @@ def create_sample_logs(clus_dict, filepath):
         samplelog = EventLog(**args)
         for idx in len(log):
             if log[idx].attributes['concept:name'] in value:
-                samplelog.append(log[idx])
-                samplelog[-1]['original_log_idx'] = idx
+                samplelog.append(deepcopy(log[idx]))
+                samplelog[-1].attributes['original_log_idx'] = idx
         sample_logs.append(samplelog)
 
     return sample_logs

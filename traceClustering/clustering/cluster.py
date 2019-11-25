@@ -28,7 +28,6 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, au
     '''
     # Do not destroy input log
     unclustered_log = deepcopy(log)
-    min_sup_abs = ceil(len(unclustered_log) * min_sup)
     # Initialise cluster attribute
     for trace in unclustered_log:
         trace.attributes['cluster'] = 0
@@ -37,25 +36,28 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, au
     num_clusters = len(sample_logs)
     clustercsvlist = []
 
-
     for cluster in range(1,num_clusters+1):
+        if(len(unclustered_log) == 0):
+            break
         csvcluster = []
+        min_sup_abs = ceil(len(unclustered_log) * min_sup)
         if not auto_thresh:
             clustering = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup_abs, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
         else:
             clustering = compute_partial_clustering_auto_thresholds(unclustered_log, sample_logs[cluster-1], min_sup_abs)
-
-        apply_clustering_to_log(log, clustering, csvcluster, cluster_label=cluster)
+        apply_clustering_to_log(unclustered_log, clustering, csvcluster, cluster_label=cluster)
         sublog, unclustered_log = split_log_on_cluster_attribute(unclustered_log)
         clustered_sublogs.append(sublog)
-        clustercsvlist[cluster] = csvcluster
+        clustercsvlist.append(csvcluster)
+    # Also append, if applicable, the leftover traces which were not assigned to a cluster
+    clustered_sublogs.append(unclustered_log)
 
     clustered_log = concat_logs(clustered_sublogs)
     return clustered_log, csvcluster
 
 # Returns an array of 0-1 values, 1 means the trace at that index of the array is in the cluster
 def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thresh_clo):
-    fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(log, min_sup)
+    fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(sample_log, min_sup)
     db = apply_sdb_mapping_to_log(log, sdb)
     # Convert relative thresholds to absolute values
     thresh_1 = ceil(thresh_1 * len(fsp_1))
@@ -67,7 +69,7 @@ def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thr
     return clustering
 
 def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
-    fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(log, min_sup)
+    fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(sample_log, min_sup)
     db = apply_sdb_mapping_to_log(log, sdb)
     scores_1, scores_2, scores_clo = get_sequence_scores(db, sdb.num_activities, fsp_1, fsp_2, fsp_c)
     max_sc_1 = max(scores_1)
@@ -76,7 +78,7 @@ def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
     len_sample = len(sample_log)
 
     # While iterating through possible threshold values, keep track of best clustering w.r.t. measure mentioned in the paper
-    best_clustering = []
+    best_clustering = [0] * len(log) # The only way for this to be the result is that the recall never exceeds 0.8, which only happens when enough traces from the sample log have already been assigned to a cluster in a previous iteration with another sample log
     best_clustering_measure = 0
 
     for thresh_1 in range(0,max_sc_1+1):
@@ -91,8 +93,9 @@ def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
                 # Possible optimisation: compute clustering only on sample_log first to determine if recall >= 0.8
                 clustering = get_clustering_from_scores(scores_1, scores_2, scores_clo, thresh_1, thresh_2, thresh_clo)
                 # intersec_size is the number of elements in the intersection of the cluster and the sample_log
-                # Assumes that each trace in the sample_log has an attribute 'original_log_idx', storing the index in the full log of said trace
-                intersec_size = sum(clustering[trace['original_log_idx']] for trace in sample_log)
+                #intersec_size = sum(clustering[trace.attributes['original_log_idx']] for trace in sample_log)
+                sample_ids = [trace.attributes['concept:name'] for trace in sample_log]
+                intersec_size = sum(1 for j in range(len(log)) if (log[j].attributes['concept:name'] in sample_ids) and (clustering[j]))
                 recall = intersec_size / len_sample
                 if recall < 0.8:
                     break   # innermost loop can break because higher threshold values can not increase the recall
@@ -124,7 +127,7 @@ def split_log_on_cluster_attribute(log):
     log1 = EventLog()
     log2 = EventLog()
     for trace in log:
-        if trace.attributes['cluster']:
+        if trace.attributes['cluster']>0:
             log1.append(trace)
         else:
             log2.append(trace)
