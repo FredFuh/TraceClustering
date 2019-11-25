@@ -1,4 +1,4 @@
-from sequenceDB import SequenceDB
+from traceClustering.sequence_mining.sequenceDB import SequenceDB
 from enum import Enum
 
 # Mining closed frequent items sets using a slightly simplified version of the CloFAST algorithm, due to abusing the fact that our itemsets are always of cardinality 1.

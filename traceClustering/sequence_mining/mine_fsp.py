@@ -1,5 +1,5 @@
-from sequenceDB import log_to_sdb
-from mine_fsp_closed import mine_fsp_closed, get_first_item_or_none, build_sils, vil_compute_support
+from traceClustering.sequence_mining.sequenceDB import log_to_sdb
+from traceClustering.sequence_mining.mine_fsp_closed import mine_fsp_closed, get_first_item_or_none, build_sils, vil_compute_support
 from pm4py.objects.log.log import EventLog
 from math import ceil
 
@@ -36,25 +36,26 @@ def mine_fsp_2(sdb, min_sup):
             freq_act.append(act)
 
     # Vil's for 1-itemsets are not explicitly built, just use first value of corresponding sil if it exists or None otherwise
-    # Initialise vil's for sequences of length 2, as a list of lists of lists, access vil by the activities of corresponding sequence
-    vil_2 = [[[None]*len(db) for act2 in freq_act] for act in freq_act]
+    # Initialise vil's for sequences of length 2, as a dict of of lists, access vil by sequence as a key
+    #vil_2 = [[[None]*len(db) for act2 in freq_act] for act in freq_act]
+    vil_2 = {(act, act2):[None]*len(db) for act in freq_act for act2 in freq_act}
 
     # Build vil's
     for act in freq_act:
         for j in range(len(db)):
             act_idx = get_first_item_or_none(sils[act][j])
-            if(act_idx is None):
+            if act_idx is None:
                 for act2 in freq_act:
-                    vil_2[act][act2][j] = None
+                    vil_2[(act, act2)][j] = None
             else:
                 for act2 in freq_act:
-                    vil_2[act][act2][j] = get_first_larger_element_or_none(sils[act2][j], act_idx)
+                    vil_2[(act, act2)][j] = get_first_larger_element_or_none(sils[act2][j], act_idx)
 
     fsp_2 = []
     # Compute support of vil's and add corresponding sequence to result
     for act in freq_act:
         for act2 in freq_act:
-            sup = vil_compute_support(vil_2[act][act2])
+            sup = vil_compute_support(vil_2[(act, act2)])
             if sup >= min_sup:
                 fsp_2.append(((act, act2), sup))
 
