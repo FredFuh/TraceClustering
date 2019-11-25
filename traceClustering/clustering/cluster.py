@@ -33,7 +33,7 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo):
 
     clustered_sublogs = []
     num_clusters = len(sample_logs)
-    clustercsvlist = []
+    clustercsvlist = dict()
 
     for cluster in range(1,num_clusters+1):
         csvcluster = []
