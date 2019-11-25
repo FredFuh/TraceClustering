@@ -8,12 +8,13 @@ from traceClustering.sequence_mining.sequenceDB import apply_sdb_mapping_to_log
 from traceClustering.sequence_mining.mine_fsp import mine_fsp_from_sample, get_first_larger_element_or_none
 from traceClustering.sequence_mining.mine_fsp_closed import build_sils, get_first_item_or_none
 
-def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo):
+def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, auto_thresh=False):
     ''' 
     Receives and event log and a list of (disjoint) sample logs which represent sample traces from clusters to be discovered and returns the input log containing the computed clustering information.
     The assigned cluster for each trace is stored as in the trace attribute 'cluster'. If the trace attribute existed before in the log, its values will be overwritten. The clusters names are
     1,...,len(sample_logs). Traces which could not be assigned to a cluster have the cluster value 0. The clusters are discovered in the order of the sample logs. For frequent sequence pattern discovery,
     min_sup describes the relative minimum support. The parameter lists lthresh_1, lthresh_2, lthresh_clo contain the thresholds to score the traces for each cluster.
+    If the auto_thresh argument is set to True, then lthresh_1, lthresh_2, lthresh_clo are ignored and the (heuristically) optimal threshold values are determined, which could greatly increase computation time.
     
     Args:
         log (EventLog): The EventLog object
@@ -39,14 +40,18 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo):
 
     for cluster in range(1,num_clusters+1):
         csvcluster = []
-        clustering = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup_abs, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
+        if not auto_thresh:
+            clustering = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup_abs, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
+        else:
+            clustering = compute_partial_clustering_auto_thresholds(unclustered_log, sample_logs[cluster-1], min_sup_abs)
+
         apply_clustering_to_log(log, clustering, csvcluster, cluster_label=cluster)
         sublog, unclustered_log = split_log_on_cluster_attribute(unclustered_log)
         clustered_sublogs.append(sublog)
         clustercsvlist[cluster] = csvcluster
 
-    concat_logs(clustered_sublogs)
-    return clustered_sublogs[0], csvcluster
+    clustered_log = concat_logs(clustered_sublogs)
+    return clustered_log, csvcluster
 
 # Returns an array of 0-1 values, 1 means the trace at that index of the array is in the cluster
 def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thresh_clo):
@@ -62,8 +67,51 @@ def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thr
     return clustering
 
 def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
-    pass
+    fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(log, min_sup)
+    db = apply_sdb_mapping_to_log(log, sdb)
+    scores_1, scores_2, scores_clo = get_sequence_scores(db, sdb.num_activities, fsp_1, fsp_2, fsp_c)
+    max_sc_1 = max(scores_1)
+    max_sc_2 = max(scores_2)
+    max_sc_clo = max(scores_clo)
+    len_sample = len(sample_log)
 
+    # While iterating through possible threshold values, keep track of best clustering w.r.t. measure mentioned in the paper
+    best_clustering = []
+    best_clustering_measure = 0
+
+    for thresh_1 in range(0,max_sc_1+1):
+        # Boolean flag analogous to the inner loop
+        iteration_2 = False
+
+        for thresh_2 in range(0,max_sc_2+1):
+            # Boolean flag on whether there was an iteration over the closed threshold where recall >= 0.8 holds, if False then further increasing thresh_2 does not give new solutions
+            iteration_clo = False
+
+            for thresh_clo in range(0,max_sc_clo+1):
+                # Possible optimisation: compute clustering only on sample_log first to determine if recall >= 0.8
+                clustering = get_clustering_from_scores(scores_1, scores_2, scores_clo, thresh_1, thresh_2, thresh_clo)
+                # intersec_size is the number of elements in the intersection of the cluster and the sample_log
+                # Assumes that each trace in the sample_log has an attribute 'original_log_idx', storing the index in the full log of said trace
+                intersec_size = sum(clustering[trace['original_log_idx']] for trace in sample_log)
+                recall = intersec_size / len_sample
+                if recall < 0.8:
+                    break   # innermost loop can break because higher threshold values can not increase the recall
+                iteration_clo = True
+                cluster_size = sum(clustering)
+                measure = (recall * recall) / cluster_size
+                if measure > best_clustering_measure:
+                    best_clustering = clustering
+                    best_clustering_measure = measure
+
+            if not iteration_clo:
+                break
+            iteration_2 = True
+
+        if not iteration_2:
+            break
+
+    return best_clustering
+                
 
 def apply_clustering_to_log(log, clustering, csvcluster, cluster_label):
     for i in range(len(log)):
