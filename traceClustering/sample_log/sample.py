@@ -143,7 +143,7 @@ def create_sample_logs(clus_dict, filepath):
     
     Input: Dictionary output of check_sample_list(), XES log filepath
     
-    Output: List of sample logs as EventLog objects, each trace contains attribute 'original_log_idx' which saves the index of the trace in the full log
+    Output: List of sample logs as EventLog objects
     """
     log = xes_importer.import_log(filepath)
     sample_logs = []
@@ -154,7 +154,7 @@ def create_sample_logs(clus_dict, filepath):
         for idx in len(log):
             if log[idx].attributes['concept:name'] in value:
                 samplelog.append(deepcopy(log[idx]))
-                samplelog[-1].attributes['original_log_idx'] = idx
+                #samplelog[-1].attributes['original_log_idx'] = idx
         sample_logs.append(samplelog)
 
     return sample_logs
