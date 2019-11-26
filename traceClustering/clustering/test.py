@@ -30,12 +30,13 @@ print(s3)
 log = xes_importer.import_log('C:\\Users\\Daniel\\Uni\\TraceClustering\\traceClustering\\test_data\\test2.xes') # for some reason I cannot import with a relative path
 print(len(log))
 sample_logs = [EventLog(deepcopy(log[:10])), EventLog(deepcopy(log[10:20]))]
-for i in range(0,10):
-    sample_logs[0][i].attributes['original_log_idx'] = i
-for i in range(10,20):
-    sample_logs[1][i-10].attributes['original_log_idx'] = i
-min_sup = 0.5
+#for i in range(0,10):
+#    sample_logs[0][i].attributes['original_log_idx'] = i
+#for i in range(10,20):
+#    sample_logs[1][i-10].attributes['original_log_idx'] = i
+min_sup = 0.99
 
+print('starting computation')
 clustered_log, _ = cluster_log(log, sample_logs, min_sup, [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], auto_thresh=True)
 print('finished computation')
 print(clustered_log)

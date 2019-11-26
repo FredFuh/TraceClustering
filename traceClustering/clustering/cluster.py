@@ -40,11 +40,10 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, au
         if(len(unclustered_log) == 0):
             break
         csvcluster = []
-        min_sup_abs = ceil(len(unclustered_log) * min_sup)
         if not auto_thresh:
-            clustering = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup_abs, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
+            clustering = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
         else:
-            clustering = compute_partial_clustering_auto_thresholds(unclustered_log, sample_logs[cluster-1], min_sup_abs)
+            clustering = compute_partial_clustering_auto_thresholds(unclustered_log, sample_logs[cluster-1], min_sup)
         apply_clustering_to_log(unclustered_log, clustering, csvcluster, cluster_label=cluster)
         sublog, unclustered_log = split_log_on_cluster_attribute(unclustered_log)
         clustered_sublogs.append(sublog)
@@ -61,8 +60,8 @@ def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thr
     db = apply_sdb_mapping_to_log(log, sdb)
     # Convert relative thresholds to absolute values
     thresh_1 = ceil(thresh_1 * len(fsp_1))
-    thresh_2 = ceil(thresh_1 * len(fsp_2))
-    thresh_clo = ceil(thresh_1 * len(fsp_c))
+    thresh_2 = ceil(thresh_2 * len(fsp_2))
+    thresh_clo = ceil(thresh_clo * len(fsp_c))
     scores_1, scores_2, scores_clo = get_sequence_scores(db, sdb.num_activities, fsp_1, fsp_2, fsp_c)
     clustering = get_clustering_from_scores(scores_1, scores_2, scores_clo, thresh_1, thresh_2, thresh_clo)
 
