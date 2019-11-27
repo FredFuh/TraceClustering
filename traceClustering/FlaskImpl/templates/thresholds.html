@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+{% block content %}
+<h2>Enter the thresholds</h2>
+<p>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+</p>
+<form method="post" action="/thresh" >
+  Threshold1:<br>
+  <input type="bumber" step="0.01" min="0" max="1" name="threshold1" value="0.9">
+  <br>
+    Threshold2:<br>
+  <input type="bumber" step="0.01" min="0" max="1" name="threshold2" value="0.9">
+  <br>
+    ThresholdClosed:<br>
+  <input type="bumber" step="0.01" min="0" max="1" name="thresholdclo" value="0.9">
+  <br>
+
+  <input type="submit" value="Submit">
+</form>
+
+{% endblock %}
