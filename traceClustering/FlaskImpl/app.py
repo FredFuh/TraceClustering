@@ -3,81 +3,7 @@ from flask import Flask, flash, request, redirect, render_template, session
 import os
 
 app = Flask(__name__)
-
-app.config['folder_location'] = "/"
-app.secret_key = "secret key"
-
-
-@app.route('/start')
-def start():
-    return render_template('login.html')
-
-
-@app.route('/start', methods=['POST'])
-def start_session():
-    if request.method == 'POST':
-        req = request.form
-        session['username'] = req.get("username")
-        return redirect('/')
-    else:
-        return redirect(request.url)
-
-
-@app.route('/')
-def home():
-    if not session.get('username') is None:
-        return render_template('home.html')
-    else:
-        flash("Please enter a projectname first")
-        return redirect('/start')
-
-
-file_format = set(['xes'])
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in file_format
-
-
-@app.route('/', methods=['POST'])
-def upload_file():
-    if not session.get('username') is None:
-        if request.method == 'POST':
-            # check if the post request has the file part
-            if 'file' not in request.files:
-                flash('No file part')
-                return redirect(request.url)
-            file = request.files['file']
-            if file.filename == '':
-                flash('No file selected for uploading')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                print(os.path.join(app.config['folder_location']))
-                file.save(os.path.join(app.config['folder_location'], file.filename))
-                flash('File successfully uploaded')
-                return redirect('/thresh')
-            else:
-                flash('Allowed file types are xes')
-                return redirect(request.url)
-    else:
-        flash("please enter projectname first")
-        return redirect('/start')
-
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-
-@app.route('/thresh')
-def thresh():
-    if not session.get("username") is None:
-        return render_template('thresholds.html')
-    else:
-        flash("please enter projectname first")
-        return redirect('/start')
-
-
+'''
 @app.route('/thresh', methods=['POST'])
 def enterthresh():
     if not session.get('username') is None:
@@ -97,6 +23,87 @@ def enterthresh():
     else:
         flash("please enter projectname first")
         return redirect('/start')
+'''
+
+app.config['STORAGE_PATH'] = "uploads/"
+app.config['LOG_FORMAT'] = ['xes']
+app.config['SAMPLE_FORMAT'] = ['csv']
+app.secret_key = "secret key"
+
+
+def allowed_log_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['LOG_FORMAT']
+
+
+def allowed_sample_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['SAMPLE_FORMAT']
+
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if request.method == 'POST':
+        req = request.form
+        session['username'] = req.get("username")
+        return render_template('log.html')
+    elif request.method == 'GET':
+        return render_template('home.html')
+
+
+@app.route('/log', methods=['GET', 'POST'])
+def upload_log_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if not request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No file selected for uploading')
+            return redirect(request.url)
+        if file and allowed_log_file(file.filename):
+            file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
+            # flash('File successfully uploaded')
+            return render_template('sample.html')
+        else:
+            flash('Allowed file types are xes')
+            return redirect(request.url)
+    elif request.method == 'GET':
+        return render_template('log.html')
+
+
+@app.route('/sample', methods=['GET', 'POST'])
+def upload_sample_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if not request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No file selected for uploading')
+            return redirect(request.url)
+        if file and allowed_sample_file(file.filename):
+            file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
+            # flash('File successfully uploaded')
+            return render_template('thresholds.html')
+        else:
+            flash('Allowed file types are csv')
+            return redirect(request.url)
+    elif request.method == 'GET':
+        return render_template('sample.html')
+
+
+@app.route('/thresholds', methods=['GET', 'POST'])
+def thresholds():
+    if request.method == 'POST':
+        return render_template('about.html')  # instead of about page, call a new page which shows FSPs for each cluster and an option to download
+    elif request.method == 'GET':
+        return render_template('thresholds.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 
 if __name__ == '__main__':

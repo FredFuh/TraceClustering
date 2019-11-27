@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+
+{% block title %}Input Sample{% endblock %}
+
+{% block content %}
+<h2>Select the sample data and upload</h2>
+<p>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+</p>
+<form method="POST" action="/sample" enctype="multipart/form-data">
+	<div class="form-group">
+		<div class="custom-file">
+			<input type="file" name="file" autocomplete="off" class="custom-file-input" required>
+			<label class="custom-file-label" for="image">Select log...</label>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-primary" value="Upload">Upload</button>
+</form>
+{% endblock %}

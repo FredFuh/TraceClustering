@@ -1,6 +1,9 @@
 {% extends "index.html" %}
+
+{% block title %}Thresholds{% endblock %}
+
 {% block content %}
-<h2>Enter the thresholds</h2>
+<h2>Set the parameters for clusters</h2>
 <p>
 	{% with messages = get_flashed_messages() %}
 	  {% if messages %}
@@ -12,18 +15,25 @@
 	  {% endif %}
 	{% endwith %}
 </p>
-<form method="post" action="/thresh" >
-  Threshold1:<br>
-  <input type="bumber" step="0.01" min="0" max="1" name="threshold1" value="0.9">
-  <br>
-    Threshold2:<br>
-  <input type="bumber" step="0.01" min="0" max="1" name="threshold2" value="0.9">
-  <br>
-    ThresholdClosed:<br>
-  <input type="bumber" step="0.01" min="0" max="1" name="thresholdclo" value="0.9">
-  <br>
+<form method="POST" action="/thresholds" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Relative Support</label>
+        <input type="range" class="form-control-range" id="formControlRange" name="support" required>
+    </div>
 
-  <input type="submit" value="Submit">
+	<div class="form-group">
+    	<label>Threshold 1</label>
+    	<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Threshold" name="threshold1" required>
+  	</div>
+  	<div class="form-group">
+    	<label">Threshold 2</label>
+    	<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Threshold" name="threshold2" required>
+  	</div>
+  	<div class="form-group">
+    	<label">Threshold 3</label>
+    	<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Threshold" name="threshold3" required>
+  	</div>
+
+	<button type="submit" class="btn btn-primary" value="Submit">Submit</button>
 </form>
-
 {% endblock %}
