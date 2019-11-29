@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h2>Enter a project/user name</h2>
+<h2>Do you want to sign out?</h2>
 <p>
 	{% with messages = get_flashed_messages() %}
 	  {% if messages %}
@@ -15,12 +15,8 @@
 	  {% endif %}
 	{% endwith %}
 </p>
-<form method="POST" action="/" enctype="multipart/form-data">
-	<div class="form-group">
-    	<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Name" name="username" required>
-  	</div>
+<form method="POST" action="/signout" enctype="multipart/form-data">
 
 	<button type="submit" class="btn btn-primary" value="Submit">Submit</button>
 </form>
 {% endblock %}
-

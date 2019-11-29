@@ -43,68 +43,90 @@ def allowed_sample_file(filename):
 def home():
     if request.method == 'POST':
         req = request.form
-        session['username'] = req.get("username")
-        return render_template('log.html')
+        if not req.get('username') is None:
+            session['username'] = req.get("username")
+            return render_template('log.html')
+        else:
+            return render_template('home.html')
     elif request.method == 'GET':
         return render_template('home.html')
 
 
 @app.route('/log', methods=['GET', 'POST'])
 def upload_log_file():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if not request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        if file.filename == '':
-            flash('No file selected for uploading')
-            return redirect(request.url)
-        if file and allowed_log_file(file.filename):
-            file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
-            # flash('File successfully uploaded')
-            return render_template('sample.html')
-        else:
-            flash('Allowed file types are xes')
-            return redirect(request.url)
-    elif request.method == 'GET':
-        return render_template('log.html')
+    if not session.get('username') is None:
+        if request.method == 'POST':
+            # check if the post request has the file part
+            if not request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            if file.filename == '':
+                flash('No file selected for uploading')
+                return redirect(request.url)
+            if file and allowed_log_file(file.filename):
+                file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
+                # flash('File successfully uploaded')
+                return render_template('sample.html')
+            else:
+                flash('Allowed file types are xes')
+                return redirect(request.url)
+        elif request.method == 'GET':
+            return render_template('log.html')
+    else:
+        flash('Please enter a Projectname first')
+        return redirect('/')
 
 
 @app.route('/sample', methods=['GET', 'POST'])
 def upload_sample_file():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if not request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        if file.filename == '':
-            flash('No file selected for uploading')
-            return redirect(request.url)
-        if file and allowed_sample_file(file.filename):
-            file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
-            # flash('File successfully uploaded')
-            return render_template('thresholds.html')
-        else:
-            flash('Allowed file types are csv')
-            return redirect(request.url)
-    elif request.method == 'GET':
-        return render_template('sample.html')
+    if not session.get('username') is None:
+        if request.method == 'POST':
+            # check if the post request has the file part
+            if not request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            if file.filename == '':
+                flash('No file selected for uploading')
+                return redirect(request.url)
+            if file and allowed_sample_file(file.filename):
+                file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
+                # flash('File successfully uploaded')
+                return render_template('thresholds.html')
+            else:
+                flash('Allowed file types are csv')
+                return redirect(request.url)
+        elif request.method == 'GET':
+            return render_template('sample.html')
+    else:
+        flash('Please enter a Projectname first')
+        return redirect('/')
 
 
 @app.route('/thresholds', methods=['GET', 'POST'])
 def thresholds():
-    if request.method == 'POST':
-        return render_template('about.html')  # instead of about page, call a new page which shows FSPs for each cluster and an option to download
-    elif request.method == 'GET':
-        return render_template('thresholds.html')
+    if not session.get('username') is None:
+        if request.method == 'POST':
+            return render_template('about.html')  # instead of about page, call a new page which shows FSPs for each cluster and an option to download
+        elif request.method == 'GET':
+            return render_template('thresholds.html')
+    else:
+        flash('Please enter a Projectname first')
+        return redirect('/')
+
 
 
 @app.route('/about')
 def about():
     return render_template('about.html')
 
-
+@app.route('/signout', methods=['GET','POST'])
+def signout():
+    if request.method == 'POST':
+        session.pop('username', None)
+        return redirect('/')
+    else:
+        return render_template('signout.html')
 if __name__ == '__main__':
     app.run(debug=True)  # to be set to False in production. Enabling this to get trace of the errors
