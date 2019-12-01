@@ -1,5 +1,5 @@
 import requests as request
-from flask import Flask, flash, request, redirect, render_template, session
+from flask import Flask, flash, request, redirect, render_template, session, send_from_directory
 import os
 
 app = Flask(__name__)
@@ -29,6 +29,7 @@ app.config['STORAGE_PATH'] = "uploads/"
 app.config['LOG_FORMAT'] = ['xes']
 app.config['SAMPLE_FORMAT'] = ['csv']
 app.secret_key = "secret key"
+app.config['OUTPUT'] = "output/"
 
 
 def allowed_log_file(filename):
@@ -128,5 +129,18 @@ def signout():
         return redirect('/')
     else:
         return render_template('signout.html')
+
+#output filename is set to <projectname>+_out.xes. File should be placed under output directory.
+@app.route('/download', methods=['GET'])
+def download():
+    if not session.get('username') is None:
+        output = os.path.join(app.root_path, app.config['OUTPUT'])
+        print(session.get('username')+"_out")
+        return send_from_directory(directory=output, filename=session.get('username')+"_out.xes", as_attachment=True)
+    else:
+        flash('Please enter a Projectname first')
+        return redirect('/')
+
+
 if __name__ == '__main__':
     app.run(debug=True)  # to be set to False in production. Enabling this to get trace of the errors
