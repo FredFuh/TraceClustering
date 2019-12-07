@@ -3,6 +3,29 @@
 {% block title %}Thresholds{% endblock %}
 
 {% block content %}
+
+<script type="text/javascript">// <![CDATA[
+        function loading(){
+            $("#loading").show();
+            $("#content").hide();       
+        }
+// ]]></script>
+
+<style type="text/css">
+div#loading {
+    width: 35px;
+    height: 35px;
+    display: none;
+    background: url(/static/loader.gif) no-repeat;
+    cursor: wait;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    }
+</style>
+
+<div id="content">
+
 <h2>Set the parameters for clusters</h2>
 <p>
 	{% with messages = get_flashed_messages() %}
@@ -34,6 +57,11 @@
     	<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Threshold" name="threshold3" required>
   	</div>
 
-	<button type="submit" class="btn btn-primary" value="Submit">Submit</button>
-</form>
+	<button type="submit" class="btn btn-primary" value="Submit" onclick="loading()">Submit</button>
+</form> 
+
+</div>
+<div id="loading"></div>
+
+
 {% endblock %}
