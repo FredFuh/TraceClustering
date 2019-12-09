@@ -66,7 +66,9 @@ def upload_log_file():
                 flash('No file selected for uploading')
                 return redirect(request.url)
             if file and allowed_log_file(file.filename):
-                file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
+                filename = session.get('username') +".xes"
+                print(filename)
+                file.save(os.path.join(app.config['STORAGE_PATH'], filename))
                 # flash('File successfully uploaded')
                 return render_template('sample.html')
             else:
@@ -92,7 +94,8 @@ def upload_sample_file():
                 flash('No file selected for uploading')
                 return redirect(request.url)
             if file and allowed_sample_file(file.filename):
-                file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
+                filename = session.get("username") + ".xes"
+                file.save(os.path.join(app.config['STORAGE_PATH'], filename))
                 # flash('File successfully uploaded')
                 return render_template('thresholds.html')
             else:
@@ -109,7 +112,16 @@ def upload_sample_file():
 def thresholds():
     if not session.get('username') is None:
         if request.method == 'POST':
-            return render_template('about.html')  # instead of about page, call a new page which shows FSPs for each cluster and an option to download
+            # this whole stuff is just placeholder will be removed once real values are obtained
+            result = list()
+            measures = dict()
+            measures['recall'] = 1
+            measures['precision'] = 1
+            measures['F1'] = 1
+            result.append(measures)
+            result.append(measures)
+            result.append(measures)
+            return render_template('measures.html', result=result)  # instead of about page, call a new page which shows FSPs for each cluster and an option to download
         elif request.method == 'GET':
             return render_template('thresholds.html')
     else:

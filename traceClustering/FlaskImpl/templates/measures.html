@@ -1,0 +1,37 @@
+{% extends "index.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h2>Results</h2>
+<table border = 1>
+    <tr>
+        <th> recall </th>
+    {% for entry in result %}
+         <td>
+             {{entry["recall"]}}
+         </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        <th> Precision </th>
+    {% for entry in result %}
+         <td>
+             {{entry["precision"]}}
+         </td>
+        {% endfor %}
+    </tr>
+    <tr>
+        <th> F1 </th>
+    {% for entry in result %}
+         <td>
+             {{entry["F1"]}}
+         </td>
+        {% endfor %}
+    </tr>
+      </table>
+
+<a href="/download" target="blank"> <button class="btn btn-primary" >Download Xes</button></a>
+<a href="/download-csv" target="blank"> <button class="btn btn-primary" >Download Csv</button></a>
+
+{% endblock %}
