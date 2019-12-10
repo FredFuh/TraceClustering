@@ -12,7 +12,7 @@ from copy import deepcopy
 
 def build_sequences(filepath):
     """ 
-    Converts the input log into a dictionary with case ids as key and list of events as its values. 
+    Converts the input log into a dictionary with case ids as key and list of activities as its values. 
 
     Input: XES log filepath
     

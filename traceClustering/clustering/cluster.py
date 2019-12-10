@@ -25,6 +25,9 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, au
     Returns:
         EventLog: The event log containing cluster information
         [(str, int)]: List of case id's and the cluster they belong to
+        dict(int:([((str), int)], [((str), int)], [((str), int)])): Dictionary containing the fsp's for each cluster. The cluster name of type int serves as the key. A corresponding value for a cluster is a tuple of length 3 where the
+                                                                    first entry contains the fsp's of length 1, the second of length 2 and the third the closed ones. Each set of fsp's is a list containing tuples with the a sequence as the first element
+                                                                    and its absolute support in the sample set as the second element. A sequence is a tuple with strings as its elements corresponding to activity names in the original log.
     '''
     # Do not destroy input log
     unclustered_log = deepcopy(log)
@@ -34,27 +37,30 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, au
 
     clustered_sublogs = []
     num_clusters = len(sample_logs)
-    clustercsvlist = dict()
+    clustercsvlist = list()
+    cluster_fsps = dict()
 
     for cluster in range(1,num_clusters+1):
         if(len(unclustered_log) == 0):
             break
         csvcluster = []
         if not auto_thresh:
-            clustering = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
+            clustering, fsps = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
         else:
-            clustering = compute_partial_clustering_auto_thresholds(unclustered_log, sample_logs[cluster-1], min_sup)
+            clustering, fsps = compute_partial_clustering_auto_thresholds(unclustered_log, sample_logs[cluster-1], min_sup)
         apply_clustering_to_log(unclustered_log, clustering, csvcluster, cluster_label=cluster)
         sublog, unclustered_log = split_log_on_cluster_attribute(unclustered_log)
         clustered_sublogs.append(sublog)
-        clustercsvlist.append(csvcluster)
+        clustercsvlist += csvcluster
+        cluster_fsps[cluster] = fsps
     # Also append, if applicable, the leftover traces which were not assigned to a cluster
     clustered_sublogs.append(unclustered_log)
 
     clustered_log = concat_logs(clustered_sublogs)
-    return clustered_log, csvcluster
+    return clustered_log, csvcluster, cluster_fsps
 
 # Returns an array of 0-1 values, 1 means the trace at that index of the array is in the cluster
+# Also returns the mined fsp's as ([((str), int)], [((str), int)], [((str), int)])), see explanation in the cluster_log function
 def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thresh_clo):
     fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(sample_log, min_sup)
     db = apply_sdb_mapping_to_log(log, sdb)
@@ -65,7 +71,9 @@ def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thr
     scores_1, scores_2, scores_clo = get_sequence_scores(db, sdb.num_activities, fsp_1, fsp_2, fsp_c)
     clustering = get_clustering_from_scores(scores_1, scores_2, scores_clo, thresh_1, thresh_2, thresh_clo)
 
-    return clustering
+    fsps = apply_reverse_sdb_mapping_to_sequences(fsp_1, fsp_2, fsp_c, sdb)
+
+    return clustering, fsps
 
 def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
     fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(sample_log, min_sup)
@@ -112,7 +120,9 @@ def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
         if not iteration_2:
             break
 
-    return best_clustering
+    fsps = apply_reverse_sdb_mapping_to_sequences(fsp_1, fsp_2, fsp_c, sdb)
+
+    return best_clustering, fsps
                 
 
 def apply_clustering_to_log(log, clustering, csvcluster, cluster_label):
@@ -222,3 +232,10 @@ def compute_prefix_vils(seq, n, sils, vils_dict):
 
 def get_clustering_from_scores(scores_1, scores_2, scores_clo, thresh_1, thresh_2, thresh_clo):
     return [int(s1>=thresh_1 and s2>=thresh_2 and s3>=thresh_clo) for s1, s2, s3 in zip(scores_1,scores_2,scores_clo)]
+
+def apply_reverse_sdb_mapping_to_sequences(fsp_1, fsp_2, fsp_c, sdb):
+    transf_fsp_1 = [(tuple(sdb.idx_to_activity[idx] for idx in seq), sup) for (seq, sup) in fsp_1]
+    transf_fsp_2 = [(tuple(sdb.idx_to_activity[idx] for idx in seq), sup) for (seq, sup) in fsp_2]
+    transf_fsp_c = [(tuple(sdb.idx_to_activity[idx] for idx in seq), sup) for (seq, sup) in fsp_c]
+
+    return (transf_fsp_1, transf_fsp_2, transf_fsp_c)
