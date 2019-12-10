@@ -37,11 +37,12 @@ sample_logs = [EventLog(deepcopy(log[:10])), EventLog(deepcopy(log[10:20]))]
 min_sup = 0.99
 
 print('starting computation')
-clustered_log, _, cluster_fsps = cluster_log(log, sample_logs, min_sup, [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], auto_thresh=True)
+clustered_log, _, cluster_fsps = cluster_log(log, sample_logs, [1,2], min_sup, [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], auto_thresh=True)
 print('finished computation')
 print(clustered_log)
 print(len(clustered_log))
-print('quality measures: ', compute_cluster_quality_measures(clustered_log, sample_logs))
+print(type(clustered_log[0].attributes['cluster']))
+print('quality measures: ', compute_cluster_quality_measures(clustered_log, sample_logs, [1,2]))
 print('cluster 1 fsp_1: ', cluster_fsps[1][0])
 print('cluster 1 fsp_2: ', cluster_fsps[1][1])
 print('cluster 1 fsp_c: ', cluster_fsps[1][2])

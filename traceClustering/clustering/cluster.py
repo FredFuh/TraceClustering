@@ -8,7 +8,7 @@ from traceClustering.sequence_mining.sequenceDB import apply_sdb_mapping_to_log
 from traceClustering.sequence_mining.mine_fsp import mine_fsp_from_sample, get_first_larger_element_or_none
 from traceClustering.sequence_mining.mine_fsp_closed import build_sils, get_first_item_or_none
 
-def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, auto_thresh=False):
+def cluster_log(log, sample_logs, cluster_labels, min_sup, lthresh_1, lthresh_2, lthresh_clo, auto_thresh=False):
     ''' 
     Receives and event log and a list of (disjoint) sample logs which represent sample traces from clusters to be discovered and returns the input log containing the computed clustering information.
     The assigned cluster for each trace is stored as in the trace attribute 'cluster'. If the trace attribute existed before in the log, its values will be overwritten. The clusters names are
@@ -19,11 +19,13 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, au
     Args:
         log (EventLog): The EventLog object
         sample_logs ([EventLog]): The list of EventLog objects representing the sample lists
+        cluster_labels(list()): The list of cluster labels, assuming the cluster label 0 is not used
         min_sup (int): The relative minimum support for fsp discovery
-        thresh_1, thresh_2, thresh_clo (float): Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain
+        lthresh_1, lthresh_2, lthresh_clo ([float]): Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain
+        auto_thresh (Bool): Boolean indicating whether automatically set thresholds should be used
     
     Returns:
-        EventLog: The event log containing cluster information
+        EventLog: The event log containing cluster information. Traces which were not assigned to a cluster have the cluster attribute 0
         [(str, int)]: List of case id's and the cluster they belong to
         dict(int:([((str), int)], [((str), int)], [((str), int)])): Dictionary containing the fsp's for each cluster. The cluster name of type int serves as the key. A corresponding value for a cluster is a tuple of length 3 where the
                                                                     first entry contains the fsp's of length 1, the second of length 2 and the third the closed ones. Each set of fsp's is a list containing tuples with the a sequence as the first element
@@ -36,28 +38,28 @@ def cluster_log(log, sample_logs, min_sup, lthresh_1, lthresh_2, lthresh_clo, au
         trace.attributes['cluster'] = 0
 
     clustered_sublogs = []
-    num_clusters = len(sample_logs)
+    #num_clusters = len(sample_logs)
     clustercsvlist = list()
     cluster_fsps = dict()
 
-    for cluster in range(1,num_clusters+1):
+    for i, cluster_label in enumerate(cluster_labels):
         if(len(unclustered_log) == 0):
             break
         csvcluster = []
         if not auto_thresh:
-            clustering, fsps = compute_partial_clustering(unclustered_log, sample_logs[cluster-1], min_sup, lthresh_1[cluster-1], lthresh_2[cluster-1], lthresh_clo[cluster-1])
+            clustering, fsps = compute_partial_clustering(unclustered_log, sample_logs[i], min_sup, lthresh_1[i], lthresh_2[i], lthresh_clo[i])
         else:
-            clustering, fsps = compute_partial_clustering_auto_thresholds(unclustered_log, sample_logs[cluster-1], min_sup)
-        apply_clustering_to_log(unclustered_log, clustering, csvcluster, cluster_label=cluster)
+            clustering, fsps = compute_partial_clustering_auto_thresholds(unclustered_log, sample_logs[i], min_sup)
+        apply_clustering_to_log(unclustered_log, clustering, csvcluster, cluster_label)
         sublog, unclustered_log = split_log_on_cluster_attribute(unclustered_log)
         clustered_sublogs.append(sublog)
         clustercsvlist += csvcluster
-        cluster_fsps[cluster] = fsps
+        cluster_fsps[cluster_label] = fsps
     # Also append, if applicable, the leftover traces which were not assigned to a cluster
     clustered_sublogs.append(unclustered_log)
 
     clustered_log = concat_logs(clustered_sublogs)
-    return clustered_log, csvcluster, cluster_fsps
+    return clustered_log, clustercsvlist, cluster_fsps
 
 # Returns an array of 0-1 values, 1 means the trace at that index of the array is in the cluster
 # Also returns the mined fsp's as ([((str), int)], [((str), int)], [((str), int)])), see explanation in the cluster_log function

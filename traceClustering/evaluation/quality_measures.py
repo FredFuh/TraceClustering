@@ -1,21 +1,23 @@
+from collections import defaultdict
+
 # Compute estimated cluster quality measures (recall, precision, f1-score), formula found in the paper by X. Lu
-def compute_cluster_quality_measures(clustered_log, sample_logs):
+def compute_cluster_quality_measures(clustered_log, sample_logs, cluster_labels):
     # Assuming the traces of the sample logs have an trace attribute 'original_log_idx' which is the index of said trace in the clustered_log
     # Assuming clustered_log contains a trace attribute 'cluster'
-    num_clusters = len(sample_logs)+1   # including 'dummy' cluster 0, which are the traces which were not assigned to a cluster
+    #num_clusters = len(sample_logs)+1   # including 'dummy' cluster 0, which are the traces which were not assigned to a cluster
     measures = dict()
-    cluster_sizes = [0] * num_clusters
+    cluster_sizes = defaultdict(lambda: 0)
 
     for trace in clustered_log:
         cluster_sizes[trace.attributes['cluster']] += 1
 
-    for cluster in range(1,num_clusters):
-        if cluster_sizes[cluster] == 0:
+    for i, cluster_label in enumerate(cluster_labels):
+        if cluster_sizes[cluster_label] == 0:
             recall, precision, f1_score = 0, 0, 0
         else:
-            precision, recall = compute_precision_and_recall(clustered_log, sample_logs[cluster-1], cluster_sizes[cluster], cluster)
+            precision, recall = compute_precision_and_recall(clustered_log, sample_logs[i], cluster_sizes[cluster_label], cluster_label)
             f1_score = compute_f1_score(precision, recall)
-        measures[cluster] = (recall, precision, f1_score)
+        measures[cluster_label] = (recall, precision, f1_score)
 
     return measures
 
