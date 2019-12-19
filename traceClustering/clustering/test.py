@@ -27,9 +27,10 @@ print(s3)
 
 ########
 
-log = xes_importer.import_log('C:\\Users\\Daniel\\Uni\\TraceClustering\\traceClustering\\test_data\\test2.xes') # for some reason I cannot import with a relative path
+log = xes_importer.import_log('c:/Users/Daniel/Uni/TraceClustering/traceClustering/test_data/test2.xes') # for some reason I cannot import with a relative path
 print(len(log))
 sample_logs = [EventLog(deepcopy(log[:10])), EventLog(deepcopy(log[10:20]))]
+print([trace.attributes['concept:name'] for trace in sample_logs[0]], [trace.attributes['concept:name'] for trace in sample_logs[1]])
 #for i in range(0,10):
 #    sample_logs[0][i].attributes['original_log_idx'] = i
 #for i in range(10,20):
@@ -37,12 +38,12 @@ sample_logs = [EventLog(deepcopy(log[:10])), EventLog(deepcopy(log[10:20]))]
 min_sup = 0.99
 
 print('starting computation')
-clustered_log, _, cluster_fsps = cluster_log(log, sample_logs, [1,2], min_sup, [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], auto_thresh=True)
+clustered_log, _, cluster_fsps = cluster_log(log, sample_logs, ['1','2'], min_sup, [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], auto_thresh=True)
 print('finished computation')
 print(clustered_log)
 print(len(clustered_log))
 print(type(clustered_log[0].attributes['cluster']))
 print('quality measures: ', compute_cluster_quality_measures(clustered_log, sample_logs, [1,2]))
-print('cluster 1 fsp_1: ', cluster_fsps[1][0])
-print('cluster 1 fsp_2: ', cluster_fsps[1][1])
-print('cluster 1 fsp_c: ', cluster_fsps[1][2])
+print('cluster 1 fsp_1: ', cluster_fsps['1'][0])
+print('cluster 1 fsp_2: ', cluster_fsps['1'][1])
+print('cluster 1 fsp_c: ', cluster_fsps['1'][2])

@@ -76,7 +76,7 @@ def create_sample_logs(clus_dict, cluster_labels, log):
         caseids = clus_dict[cluster_label]
         args = {'attributes': log.attributes, 'extensions': log.extensions, 'omni_present': log.omni_present, 'classifiers': log.classifiers}
         samplelog = EventLog(**args)
-        for idx in len(log):
+        for idx in range(len(log)):
             if log[idx].attributes['concept:name'] in caseids:
                 samplelog.append(deepcopy(log[idx]))
                 #samplelog[-1].attributes['original_log_idx'] = idx

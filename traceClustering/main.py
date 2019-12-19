@@ -32,10 +32,11 @@ def traceclustering_main(log, clus_dict, cluster_labels, min_sup, lthresh_1, lth
 
     # warning if bad quality measures for some clusters, or check that in front end?
 
-    xes_exporter.export_log(clustered_log, output_log_path)
-    with open(output_csv_path, 'w') as csv_output:
+    with open(output_csv_path, 'w+', newline='') as csv_output:
         writer = csv.writer(csv_output)
         for row in clustercsvlist:
             writer.writerow(row)
+    
+    xes_exporter.export_log(clustered_log, output_log_path)
 
     return cluster_fsps, measures

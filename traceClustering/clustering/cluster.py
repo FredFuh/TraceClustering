@@ -27,7 +27,7 @@ def cluster_log(log, sample_logs, cluster_labels, min_sup, lthresh_1, lthresh_2,
     Returns:
         EventLog: The event log containing cluster information. Traces which were not assigned to a cluster have the cluster attribute 0
         [(str, int)]: List of case id's and the cluster they belong to
-        dict(int:([((str), int)], [((str), int)], [((str), int)])): Dictionary containing the fsp's for each cluster. The cluster name of type int serves as the key. A corresponding value for a cluster is a tuple of length 3 where the
+        dict(cluster_label:([((str), int)], [((str), int)], [((str), int)])): Dictionary containing the fsp's for each cluster. The cluster name serves as the key. A corresponding value for a cluster is a tuple of length 3 where the
                                                                     first entry contains the fsp's of length 1, the second of length 2 and the third the closed ones. Each set of fsp's is a list containing tuples with the a sequence as the first element
                                                                     and its absolute support in the sample set as the second element. A sequence is a tuple with strings as its elements corresponding to activity names in the original log.
     '''
@@ -35,7 +35,7 @@ def cluster_log(log, sample_logs, cluster_labels, min_sup, lthresh_1, lthresh_2,
     unclustered_log = deepcopy(log)
     # Initialise cluster attribute
     for trace in unclustered_log:
-        trace.attributes['cluster'] = 0
+        trace.attributes['cluster'] = '0'
 
     clustered_sublogs = []
     #num_clusters = len(sample_logs)
@@ -57,6 +57,7 @@ def cluster_log(log, sample_logs, cluster_labels, min_sup, lthresh_1, lthresh_2,
         cluster_fsps[cluster_label] = fsps
     # Also append, if applicable, the leftover traces which were not assigned to a cluster
     clustered_sublogs.append(unclustered_log)
+    clustercsvlist += [(trace.attributes['concept:name'], '0') for trace in unclustered_log]
 
     clustered_log = concat_logs(clustered_sublogs)
     return clustered_log, clustercsvlist, cluster_fsps
@@ -138,7 +139,7 @@ def split_log_on_cluster_attribute(log):
     log1 = EventLog()
     log2 = EventLog()
     for trace in log:
-        if trace.attributes['cluster']>0:
+        if trace.attributes['cluster'] != '0':
             log1.append(trace)
         else:
             log2.append(trace)
