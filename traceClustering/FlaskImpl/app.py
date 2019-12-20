@@ -1,5 +1,6 @@
 import requests as request
 from flask import Flask, flash, request, redirect, render_template, session, send_from_directory
+from traceClustering.main import check_sample_list
 import os
 
 app = Flask(__name__)
@@ -67,7 +68,7 @@ def upload_log_file():
                 return redirect(request.url)
             if file and allowed_log_file(file.filename):
                 filename = session.get('username') +".xes"
-                print(filename)
+                #print(filename)
                 file.save(os.path.join(app.config['STORAGE_PATH'], filename))
                 # flash('File successfully uploaded')
                 return render_template('sample.html')
@@ -94,10 +95,11 @@ def upload_sample_file():
                 flash('No file selected for uploading')
                 return redirect(request.url)
             if file and allowed_sample_file(file.filename):
-                filename = session.get("username") + ".xes"
+                filename = session.get("username") + ".csv"
                 file.save(os.path.join(app.config['STORAGE_PATH'], filename))
                 # flash('File successfully uploaded')
-                return render_template('thresholds.html')
+                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+                return render_template('thresholds.html', cluster_labels=cluster_labels)
             else:
                 flash('Allowed file types are csv')
                 return redirect(request.url)
@@ -147,7 +149,7 @@ def signout():
 def download():
     if not session.get('username') is None:
         output = os.path.join(app.root_path, app.config['OUTPUT'])
-        print(session.get('username')+"_out")
+        #print(session.get('username')+"_out")
         return send_from_directory(directory=output, filename=session.get('username')+"_out.xes", as_attachment=True)
     else:
         flash('Please enter a Projectname first')

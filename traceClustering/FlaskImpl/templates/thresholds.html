@@ -39,23 +39,28 @@ div#loading {
 	{% endwith %}
 </p>
 <form method="POST" action="/thresholds" enctype="multipart/form-data">
+	{% for cluster in cluster_labels %}
+
+	<h2>For cluster: {{cluster}}</h2>
     <div class="form-group">
         <label>Relative Support</label>
         <input type="range" class="form-control-range" id="formControlRange" name="support" required>
     </div>
 
 	<div class="form-group">
-    	<label>Threshold 1</label>
-    	<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Threshold" name="threshold1" required>
+    	<label>Relative Threshold 1</label>
+		<input type="range" class="form-control-range" id="formControlRange" placeholder="Threshold" name="threshold1" required>
   	</div>
   	<div class="form-group">
-    	<label">Threshold 2</label>
-    	<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Threshold" name="threshold2" required>
+    	<label">Relative Threshold 2</label>
+    	<input type="range" class="form-control-range" id="formControlRange" placeholder="Threshold" name="threshold2" required>
   	</div>
   	<div class="form-group">
-    	<label">Threshold 3</label>
-    	<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Threshold" name="threshold3" required>
+    	<label">Relative Threshold 3</label>
+    	<input type="range" class="form-control-range" id="formControlRange" placeholder="Threshold" name="threshold3" required>
   	</div>
+
+	{% endfor %}
 
 	<button type="submit" class="btn btn-primary" value="Submit" onclick="loading()">Submit</button>
 </form> 
