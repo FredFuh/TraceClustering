@@ -3,35 +3,58 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h2>Results</h2>
-<table border = 1>
-    <tr>
-        <th> recall </th>
-    {% for entry in result %}
-         <td>
-             {{entry["recall"]}}
-         </td>
-        {% endfor %}
-    </tr>
-    <tr>
-        <th> Precision </th>
-    {% for entry in result %}
-         <td>
-             {{entry["precision"]}}
-         </td>
-        {% endfor %}
-    </tr>
-    <tr>
-        <th> F1 </th>
-    {% for entry in result %}
-         <td>
-             {{entry["F1"]}}
-         </td>
-        {% endfor %}
-    </tr>
-      </table>
+<div>
+{% for item in cluster_labels %}
+    <h2>For Cluster: {{item}}</h2>
 
-<a href="/download" target="blank"> <button class="btn btn-primary" >Download Xes</button></a>
-<a href="/download-csv" target="blank"> <button class="btn btn-primary" >Download Csv</button></a>
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Recall</th>
+          <th scope="col">Precision</th>
+          <th scope="col">F1-Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{measures.get(item)[0]}}</td>
+          <td>{{measures.get(item)[1]}}</td>
+          <td>{{measures.get(item)[2]}}</td>
+        </tr>
+      </tbody>
+    </table>
 
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Length</th>
+          <th scope="col">FSPs</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for length in range(3) %}
+        <tr>
+                <td>
+                    {% if length == 2 %}
+                    Closed
+                    {% else %}
+                    {{length+1}}
+                    {% endif %}
+                </td>
+                <td>
+                    {% for element in cluster_fsps.get(item)[length] %}
+                        <div>{{', '.join(element[0])}}</div>
+                    {% endfor %}
+                </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endfor %}
+</div>
+
+<div style="text-align: center">
+<a href="/download_xes" target="blank"> <button class="btn btn-primary" >Download (XES)</button></a>
+<a href="/download_csv" target="blank"> <button class="btn btn-primary" >Download (CSV)</button></a>
+</div>
 {% endblock %}

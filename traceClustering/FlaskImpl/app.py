@@ -1,30 +1,9 @@
 import requests as request
 from flask import Flask, flash, request, redirect, render_template, session, send_from_directory
-from traceClustering.main import check_sample_list
+from traceClustering.main import check_sample_list, traceclustering_main
 import os
 
 app = Flask(__name__)
-'''
-@app.route('/thresh', methods=['POST'])
-def enterthresh():
-    if not session.get('username') is None:
-        if request.method == 'POST':
-            t1 = float(request.form['threshold1'])
-            t2 = float(request.form['threshold2'])
-            tclo = float(request.form['thresholdclo'])
-            if t1 < 0 or t1 > 1 or t2 < 0 or t2 > 1 or tclo < 0 or tclo > 1:
-                flash('Please enter values between 0 and 1 ')
-                return redirect(request.url)
-            # calculate clustering and show downlaod page username used to find xes and csv file (username.xes, username.csv)
-            # xes, csv = clusterdata(t1,t2,tclo, username)
-            session.pop("username", None)
-            flash("here downloadpage will be displayed")
-            return redirect('/')
-        return redirect('/thresh')
-    else:
-        flash("please enter projectname first")
-        return redirect('/start')
-'''
 
 app.config['STORAGE_PATH'] = "uploads/"
 app.config['LOG_FORMAT'] = ['xes']
@@ -114,27 +93,57 @@ def upload_sample_file():
 def thresholds():
     if not session.get('username') is None:
         if request.method == 'POST':
-            # this whole stuff is just placeholder will be removed once real values are obtained
-            result = list()
-            measures = dict()
-            measures['recall'] = 1
-            measures['precision'] = 1
-            measures['F1'] = 1
-            result.append(measures)
-            result.append(measures)
-            result.append(measures)
-            return render_template('measures.html', result=result)  # instead of about page, call a new page which shows FSPs for each cluster and an option to download
+            # TODO: Check if automatic threshold is enables, accodringly call the function.
+
+            req = request.form
+            xes_path = os.path.join(app.config['OUTPUT'], session.get("username") + "_clustered.xes")
+            csv_path = os.path.join(app.config['OUTPUT'], session.get("username") + "_clustered.csv")
+
+            support = int(req.get("support"))/100
+            thresh1 = list(map(int, req.getlist("threshold1")))
+            thresh1[:] = [val / 100 for val in thresh1]
+            thresh2 = list(map(int, req.getlist("threshold2")))
+            thresh2[:] = [val / 100 for val in thresh2]
+            thresh3 = list(map(int, req.getlist("threshold3")))
+            thresh3[:] = [val / 100 for val in thresh3]
+
+            success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+            #print(success)
+            #print(error_str)
+            #print(clus_dict)
+            #print(cluster_labels)
+            #print(log[0])
+
+            cluster_fsps, measures = traceclustering_main(log, clus_dict, cluster_labels, support, thresh1, thresh2, thresh3, True, xes_path, csv_path)
+
+            #print(measures)
+            #print(cluster_fsps)
+
+            return render_template('measures.html', cluster_labels=cluster_labels, cluster_fsps=cluster_fsps, measures=measures)
         elif request.method == 'GET':
             return render_template('thresholds.html')
     else:
         flash('Please enter a Projectname first')
         return redirect('/')
 
+#output filename is set to <projectname>+_clustered.xes. File should be placed under app.config['output'] directory.
+@app.route('/download_xes', methods=['GET'])
+def download_xes():
+    if not session.get('username') is None:
+        output = os.path.join(app.root_path, app.config['OUTPUT'])
+        return send_from_directory(directory=output, filename=session.get('username')+"_clustered.xes", as_attachment=True)
+    else:
+        flash('Please enter a Projectname first')
+        return redirect('/')
 
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
+@app.route('/download_csv', methods=['GET'])
+def download_csv():
+    if not session.get('username') is None:
+        output = os.path.join(app.root_path, app.config['OUTPUT'])
+        return send_from_directory(directory=output, filename=session.get('username')+"_clustered.csv", as_attachment=True)
+    else:
+        flash('Please enter a Projectname first')
+        return redirect('/')
 
 @app.route('/signout', methods=['GET','POST'])
 def signout():
@@ -144,17 +153,9 @@ def signout():
     else:
         return render_template('signout.html')
 
-#output filename is set to <projectname>+_out.xes. File should be placed under output directory.
-@app.route('/download', methods=['GET'])
-def download():
-    if not session.get('username') is None:
-        output = os.path.join(app.root_path, app.config['OUTPUT'])
-        #print(session.get('username')+"_out")
-        return send_from_directory(directory=output, filename=session.get('username')+"_out.xes", as_attachment=True)
-    else:
-        flash('Please enter a Projectname first')
-        return redirect('/')
-
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     app.run(debug=True)  # to be set to False in production. Enabling this to get trace of the errors

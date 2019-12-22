@@ -39,13 +39,14 @@ div#loading {
 	{% endwith %}
 </p>
 <form method="POST" action="/thresholds" enctype="multipart/form-data">
-	{% for cluster in cluster_labels %}
-
-	<h2>For cluster: {{cluster}}</h2>
-    <div class="form-group">
+	<div class="form-group">
         <label>Relative Support</label>
         <input type="range" class="form-control-range" id="formControlRange" name="support" required>
     </div>
+
+	{% for cluster in cluster_labels %}
+
+	<h2>For cluster: {{cluster}}</h2>
 
 	<div class="form-group">
     	<label>Relative Threshold 1</label>
