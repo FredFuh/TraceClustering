@@ -3,6 +3,11 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<div>
+{% for p in project_names %}
+    <h3>{{p}}</h3>
+	{%endfor%}
+</div>
 <h2>Enter a project/user name</h2>
 <p>
 	{% with messages = get_flashed_messages() %}

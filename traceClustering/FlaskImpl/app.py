@@ -11,6 +11,14 @@ app.config['SAMPLE_FORMAT'] = ['csv']
 app.secret_key = "secret key"
 app.config['OUTPUT'] = "output/"
 
+def find_projects():
+    dirlist = os.listdir(app.config['STORAGE_PATH'])
+    message = "Currently there exist the following projects:"
+    for f in dirlist:
+        if f.endswith('.xes'):
+            message += f[:-4]
+            message += ", "
+    return message
 
 def allowed_log_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['LOG_FORMAT']
@@ -28,9 +36,9 @@ def home():
             session['username'] = req.get("username")
             return render_template('log.html')
         else:
-            return render_template('home.html')
+            return render_template('home.html', project_names=[find_projects()])
     elif request.method == 'GET':
-        return render_template('home.html')
+        return render_template('home.html', project_names=[find_projects()])
 
 
 @app.route('/log', methods=['GET', 'POST'])
