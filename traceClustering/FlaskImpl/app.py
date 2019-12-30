@@ -12,6 +12,11 @@ app.secret_key = "secret key"
 app.config['OUTPUT'] = "output/"
 
 def find_projects():
+    """
+    list all currently created (with a stored xes file) projects
+    :returns
+        String of project names
+    """
     dirlist = os.listdir(app.config['STORAGE_PATH'])
     message = "Currently there exist the following projects:"
     for f in dirlist:
@@ -21,15 +26,35 @@ def find_projects():
     return message
 
 def allowed_log_file(filename):
+    """
+    checks if given file has correct type for log
+    :param filename: name of the file to check
+    :return: boolean: file has valid type
+    """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['LOG_FORMAT']
 
 
 def allowed_sample_file(filename):
+    """
+    checks if given file has correct type for sample
+    :param filename: name of file to check
+    :return: boolean: file has valid type
+    """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['SAMPLE_FORMAT']
 
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    """ Provide Landing Page to enter the Project name
+    GET
+    -------
+        :returns
+            landing page
+    POST
+    -------
+        :returns
+            Upload log page
+    """
     if request.method == 'POST':
         req = request.form
         if not req.get('username') is None:
@@ -43,6 +68,17 @@ def home():
 
 @app.route('/log', methods=['GET', 'POST'])
 def upload_log_file():
+    """
+    provides page to upload log if user already has project
+    POST
+    -------
+        store file and
+        :return redirect to upload sample page
+
+    GET
+    -------
+        :return page to select and upload log
+    """
     if not session.get('username') is None:
         if request.method == 'POST':
             # check if the post request has the file part
@@ -71,6 +107,17 @@ def upload_log_file():
 
 @app.route('/sample', methods=['GET', 'POST'])
 def upload_sample_file():
+    """
+     provides page to upload sample if user already has project
+    POST
+    -------
+        store file and
+        :return redirect to select thresholds page
+
+    GET
+    -------
+        :return page to select and upload sample
+    """
     if not session.get('username') is None:
         if request.method == 'POST':
             # check if the post request has the file part
@@ -99,6 +146,19 @@ def upload_sample_file():
 
 @app.route('/thresholds', methods=['GET', 'POST'])
 def thresholds():
+    """
+     provide page to calculate thresholds and performs the clustering.
+     For more information on the clustering algorithm refer to backend documentation.
+    POST
+    -------
+        perform clustering algorithm
+        :return redirect to download page showing measurements and fsps
+
+    GET
+    -------
+        :return page to select thresholds per cluster
+    :return:
+    """
     if not session.get('username') is None:
         if request.method == 'POST':
             # TODO: Check if automatic threshold is enables, accodringly call the function.
@@ -137,6 +197,12 @@ def thresholds():
 #output filename is set to <projectname>+_clustered.xes. File should be placed under app.config['output'] directory.
 @app.route('/download_xes', methods=['GET'])
 def download_xes():
+    """
+    send clustered xes file as download
+    GET
+    -------
+        :return clustered xes file
+    """
     if not session.get('username') is None:
         output = os.path.join(app.root_path, app.config['OUTPUT'])
         return send_from_directory(directory=output, filename=session.get('username')+"_clustered.xes", as_attachment=True)
@@ -146,6 +212,12 @@ def download_xes():
 
 @app.route('/download_csv', methods=['GET'])
 def download_csv():
+    """
+    send cluster csv file as download
+    GET
+    -------
+        :return cluster csv file
+    """
     if not session.get('username') is None:
         output = os.path.join(app.root_path, app.config['OUTPUT'])
         return send_from_directory(directory=output, filename=session.get('username')+"_clustered.csv", as_attachment=True)
