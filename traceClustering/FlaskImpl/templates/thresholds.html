@@ -24,6 +24,47 @@ div#loading {
     }
 </style>
 
+<style>
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+</style>
+
+
 <div id="content">
 
 <h2>Set the parameters for clusters</h2>
@@ -40,34 +81,88 @@ div#loading {
 </p>
 <form method="POST" action="/thresholds" enctype="multipart/form-data">
 	<div class="form-group">
-        <label>Relative Support</label>
-        <input type="range" class="form-control-range" id="formControlRange" name="support" required>
+        <label for="relativeSupport">Relative Support: </label>
+        <output id="outRelativeSupport" for="relativeSupport" readonly style="border:0; color:#000000; font-weight:bold;"></output>
+		<input type="range" class="custom-range" id="relativeSupport" min="0" max="100" value="50" step="1" name="support" autocomplete="off" required>      
+		<label for="relativeSupport" class="float-left">0</label>
+		<label for="relativeSupport" class="float-right">100</label>
     </div>
 
+	<br>
 	{% for cluster in cluster_labels %}
-
+	
 	<h2>For cluster: {{cluster}}</h2>
 
 	<div class="form-group">
-    	<label>Relative Threshold 1</label>
-		<input type="range" class="form-control-range" id="formControlRange" placeholder="Threshold" name="threshold1" required>
+		<br>
+    	<label for="threshold1">Relative Threshold 1: </label>
+		<output id="outThreshold1" for="threshold1" readonly style="border:0; color:#000000; font-weight:bold;"></output>
+		<input type="range" class="custom-range" id="threshold1" min="0" max="100" value="50" step="1" placeholder="Threshold" name="threshold1" autocomplete="off" required>		
+		<label for="threshold1" class="float-left">0</label>
+		<label for="threshold1" class="float-right">100</label>
   	</div>
   	<div class="form-group">
-    	<label">Relative Threshold 2</label>
-    	<input type="range" class="form-control-range" id="formControlRange" placeholder="Threshold" name="threshold2" required>
+  		<br>
+    	<label for="threshold2">Relative Threshold 2: </label>
+		<output id="outThreshold2" for="threshold2" readonly style="border:0; color:#000000; font-weight:bold;"></output>
+		<input type="range" class="custom-range" id="threshold2" min="0" max="100" value="50" step="1" placeholder="Threshold" name="threshold2" autocomplete="off" required>
+		<label for="threshold2" class="float-left">0</label>
+		<label for="threshold2" class="float-right">100</label>
   	</div>
   	<div class="form-group">
-    	<label">Relative Threshold 3</label>
-    	<input type="range" class="form-control-range" id="formControlRange" placeholder="Threshold" name="threshold3" required>
+  		<br>
+	   	<label for="threshold3">Relative Threshold 3: </label>
+		<output id="outThreshold3" for="threshold3" readonly style="border:0; color:#000000; font-weight:bold;"></output>
+		<input type="range" class="custom-range" id="threshold3" min="0" max="100" value="50" step="1" placeholder="Threshold" name="threshold3" autocomplete="off" required>
+		<label for="threshold1" class="float-left">0</label>
+		<label for="threshold1" class="float-right">100</label>
   	</div>
 
 	{% endfor %}
 
+	<br>
 	<button type="submit" class="btn btn-primary" value="Submit" onclick="loading()">Submit</button>
 </form> 
 
 </div>
 <div id="loading"></div>
 
+
+<script>
+
+var threshold1 = document.getElementById("threshold1");
+var outThreshold1 = document.getElementById("outThreshold1");
+outThreshold1.value = threshold1.value;
+
+threshold1.oninput = function() {
+  outThreshold1.value = this.value;
+}
+
+var threshold2 = document.getElementById("threshold2");
+var outThreshold2 = document.getElementById("outThreshold2");
+outThreshold2.value = threshold2.value;
+
+threshold2.oninput = function() {
+  outThreshold2.value = this.value;
+}
+
+var threshold3 = document.getElementById("threshold3");
+var outThreshold3 = document.getElementById("outThreshold3");
+outThreshold3.value = threshold3.value;
+
+threshold3.oninput = function() {
+  outThreshold3.value = this.value;
+}
+
+var relativeSupport = document.getElementById("relativeSupport");
+var outRelativeSupport = document.getElementById("outRelativeSupport");
+outRelativeSupport.value = relativeSupport.value;
+
+relativeSupport.oninput = function() {
+  outRelativeSupport.value = this.value;
+}
+
+
+</script>
 
 {% endblock %}
