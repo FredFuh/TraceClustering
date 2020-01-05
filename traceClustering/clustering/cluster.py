@@ -9,28 +9,39 @@ from traceClustering.sequence_mining.mine_fsp import mine_fsp_from_sample, get_f
 from traceClustering.sequence_mining.mine_fsp_closed import build_sils, get_first_item_or_none
 
 def cluster_log(log, sample_logs, cluster_labels, min_sup, lthresh_1, lthresh_2, lthresh_clo, auto_thresh=False):
-    ''' 
+    """
     Receives and event log and a list of (disjoint) sample logs which represent sample traces from clusters to be discovered and returns the input log containing the computed clustering information.
     The assigned cluster for each trace is stored as in the trace attribute 'cluster'. If the trace attribute existed before in the log, its values will be overwritten. The clusters names are
     1,...,len(sample_logs). Traces which could not be assigned to a cluster have the cluster value 0. The clusters are discovered in the order of the sample logs. For frequent sequence pattern discovery,
     min_sup describes the relative minimum support. The parameter lists lthresh_1, lthresh_2, lthresh_clo contain the thresholds to score the traces for each cluster.
     If the auto_thresh argument is set to True, then lthresh_1, lthresh_2, lthresh_clo are ignored and the (heuristically) optimal threshold values are determined, which could greatly increase computation time.
-    
-    Args:
-        log (EventLog): The EventLog object
-        sample_logs ([EventLog]): The list of EventLog objects representing the sample lists
-        cluster_labels(list()): The list of cluster labels, assuming the cluster label 0 is not used
-        min_sup (int): The relative minimum support for fsp discovery
-        lthresh_1, lthresh_2, lthresh_clo ([float]): Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain
-        auto_thresh (Bool): Boolean indicating whether automatically set thresholds should be used
-    
-    Returns:
-        EventLog: The event log containing cluster information. Traces which were not assigned to a cluster have the cluster attribute 0
-        [(str, int)]: List of case id's and the cluster they belong to
-        dict(cluster_label:([((str), int)], [((str), int)], [((str), int)])): Dictionary containing the fsp's for each cluster. The cluster name serves as the key. A corresponding value for a cluster is a tuple of length 3 where the
-                                                                    first entry contains the fsp's of length 1, the second of length 2 and the third the closed ones. Each set of fsp's is a list containing tuples with the a sequence as the first element
-                                                                    and its absolute support in the sample set as the second element. A sequence is a tuple with strings as its elements corresponding to activity names in the original log.
-    '''
+
+    Parameters
+    -----------
+    log
+        The EventLog object
+    sample_logs
+        The list of EventLog objects representing the sample lists
+    cluster_labels (list
+        The list of cluster labels, assuming the cluster label 0 is not used
+    min_sup (int)
+        The relative minimum support for fsp discovery
+    lthresh_1, lthresh_2, lthresh_clo ([float])
+        Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain
+    auto_thresh (Bool)
+        Boolean indicating whether automatically set thresholds should be used
+
+    Returns
+    -----------
+    clustered_log
+        EventLog object containing cluster information. Traces which were not assigned to a cluster have the cluster attribute 0
+    clustercsvlist ([(str, int)])
+        List of case id's and the cluster they belong to
+    cluster_fsps (dict(cluster_label:([((str), int)], [((str), int)], [((str), int)])))
+        Dictionary containing the fsp's for each cluster. The cluster name serves as the key. A corresponding value for a cluster is a tuple of length 3 where the
+        first entry contains the fsp's of length 1, the second of length 2 and the third the closed ones. Each set of fsp's is a list containing tuples with the a sequence as the first element
+        and its absolute support in the sample set as the second element. A sequence is a tuple with strings as its elements corresponding to activity names in the original log.
+    """
     # Do not destroy input log
     unclustered_log = deepcopy(log)
     # Initialise cluster attribute
@@ -65,6 +76,27 @@ def cluster_log(log, sample_logs, cluster_labels, min_sup, lthresh_1, lthresh_2,
 # Returns an array of 0-1 values, 1 means the trace at that index of the array is in the cluster
 # Also returns the mined fsp's as ([((str), int)], [((str), int)], [((str), int)])), see explanation in the cluster_log function
 def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thresh_clo):
+    """
+    Returns a partial clustering as an array of 0-1 values, 1 means the trace at that index of the array is in the cluster. Also returns the mined fsp's as ([((str), int)], [((str), int)], [((str), int)])), see explanation in the cluster_log function.
+
+    Parameters
+    -----------
+    log
+        The EventLog object
+    sample_log
+        The EventLog object representing the sample log for the cluster to be discovered
+    min_sup (int)
+        The relative minimum support for fsp discovery
+    thresh_1, thresh_2, thresh_clo (float)
+        Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain
+
+    Returns
+    -----------
+    clustering ([int])
+        The resulting clustering
+    fsps (dict(cluster_label:([((str), int)], [((str), int)], [((str), int)])))
+        FSP's that were discovered for that cluster.
+    """
     fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(sample_log, min_sup)
     db = apply_sdb_mapping_to_log(log, sdb)
     # Convert relative thresholds to absolute values
@@ -79,6 +111,26 @@ def compute_partial_clustering(log, sample_log, min_sup, thresh_1, thresh_2, thr
     return clustering, fsps
 
 def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
+    """
+    Returns a partial clustering as an array of 0-1 values, 1 means the trace at that index of the array is in the cluster. Also returns the mined fsp's as ([((str), int)], [((str), int)], [((str), int)])), see explanation in the cluster_log function.
+    Optimal thresholds are automatically determined, which increases computation time.
+
+    Parameters
+    -----------
+    log
+        The EventLog object
+    sample_log
+        The EventLog object representing the sample log for the cluster to be discovered
+    min_sup (int)
+        The relative minimum support for fsp discovery
+
+    Returns
+    -----------
+    best_clustering ([int])
+        The resulting clustering
+    fsps (dict(cluster_label:([((str), int)], [((str), int)], [((str), int)])))
+        FSP's that were discovered for that cluster.
+    """
     fsp_1, fsp_2, fsp_c, sdb = mine_fsp_from_sample(sample_log, min_sup)
     db = apply_sdb_mapping_to_log(log, sdb)
     scores_1, scores_2, scores_clo = get_sequence_scores(db, sdb.num_activities, fsp_1, fsp_2, fsp_c)
@@ -129,12 +181,42 @@ def compute_partial_clustering_auto_thresholds(log, sample_log, min_sup):
                 
 
 def apply_clustering_to_log(log, clustering, csvcluster, cluster_label):
+    """
+    For a given partial clustering for one cluster, writes the cluster label into the cluster trace attribute in the given log.
+
+    Parameters
+    -----------
+    log
+        EventLog object
+    clustering ([int])
+        The clustering list containing 0 and 1 values indicating whether a trace was assigned to the cluster or not.
+    csvcluster
+        List, which will be appended with tuples of case id and assigned cluster.
+    cluster_label
+        Label of the discovered cluster.
+    """
     for i in range(len(log)):
         if clustering[i]:
             log[i].attributes['cluster'] = cluster_label
             csvcluster.append((log[i].attributes['concept:name'], cluster_label))
 
 def split_log_on_cluster_attribute(log):
+    """
+    Splits a given log into two sublogs based on the cluster trace attribute. Seperates clustered traces from not yet clustered ones indicated by the cluster attribute having value 0.
+
+    Parameters
+    -----------
+    log
+        EventLog object
+
+    Returns
+    -----------
+    log1
+        EventLog object of traces which are assigned to a cluster.
+    log2
+        EventLog object of traces not assigned to a cluster yet.
+    
+    """
     # Insert traces where cluster attribute is nonzero into log1, rest into log2
     log1 = EventLog()
     log2 = EventLog()
@@ -146,6 +228,19 @@ def split_log_on_cluster_attribute(log):
     return log1, log2
 
 def concat_logs(logs):
+    """
+    Concatenates given event logs into one.
+
+    Parameters
+    -----------
+    logs (list)
+        List of EventLog objects
+
+    Returns
+    -----------
+    res
+        Resulting EventLog object of concatenated logs
+    """
     res = logs[0]
     for log in logs[1:]:
         for trace in log:
@@ -153,6 +248,27 @@ def concat_logs(logs):
     return res
 
 def get_sequence_scores(db, num_activities, fsp_1, fsp_2, fsp_c):
+    """
+    Computes the score for each fsp in the given database, which is the number of fsp's each sequence of the db contains.
+
+    Parameters
+    -----------
+    db ([[int]])
+        List of sequences with activities as integers.
+    num_activities (int)
+        Number of different activities.
+    fsp_1, fsp_2, fsp_c ([((str), int)])
+        Fsp's of length 1,2 or closed with their appropriate absolute support during mining.
+
+    Returns
+    -----------
+    scores_1 ([int])
+        Scores for each sequence for fsp's of length 1.
+    scores_2 ([int])
+        Scores for each sequence for fsp's of length 2.
+    scores_c ([int])
+        Scores for each sequence for closed fsp's.
+    """
     # input db is of type [[int]]
     # Discard frequency information of the fsp's
     fsp_1 = [fsp[0] for fsp in fsp_1]
@@ -206,8 +322,22 @@ def get_sequence_scores(db, num_activities, fsp_1, fsp_2, fsp_c):
 
     return scores_1, scores_2, scores_c
 
-# Computes longest common prefix of two tuples
 def longest_common_prefix_length(tup1, tup2):
+    """
+    Computes the length of the longest common prefix of two tuples.
+
+    Parameters
+    -----------
+    tup1
+        Tuple
+    tup2
+        Tuple
+
+    Returns
+    -----------
+    count (int)
+        Length of the longest common prefix.
+    """
     min_len = min(len(tup1), len(tup2))
     count = 0
     for i in range(min_len):
@@ -220,6 +350,20 @@ def longest_common_prefix_length(tup1, tup2):
 # Compute vils of all prefixes of seq (including seq) with length at least n+1, assuming the vil for the prefix of length n has been computed
 # Vil's read from and stored in vils_dict
 def compute_prefix_vils(seq, n, sils, vils_dict):
+    """
+    Compute the vertical id lists of all prefixes with length at least n+1 of a given sequence, assuming the vil for prefix of length n has been computed. The vil's are read from and stored in vils_dict.
+
+    Parameters
+    -----------
+    seq
+        Activity sequence.
+    n
+        Given prefix length for which vil was already computed.
+    sils
+        List of sparse id lists.
+    vils_dict (dict)
+        Dictionary with sequences as keys and the respective vil's as values.
+    """
     for i in range(n+1,len(seq)+1):
         vil = [None] * len(sils[0])
         prev_prefix = seq[:i-1]
@@ -234,9 +378,35 @@ def compute_prefix_vils(seq, n, sils, vils_dict):
 
 
 def get_clustering_from_scores(scores_1, scores_2, scores_clo, thresh_1, thresh_2, thresh_clo):
+    """
+    Computes the partial clustering vector of 0 (not in the cluster) and 1 (in the cluster) values for given thresholds.
+
+    Parameters
+    -----------
+    scores_1, scores_2, scores_clo ([int])
+        Scores for each sequence for fsp's of length 1, 2 or closed ones.
+    thresh_1, thresh_2, thresh_clo (float)
+        Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain
+
+    Returns
+    -----------
+    clustering ([int])
+        List of 0 and 1 values indicating whether the trace at a given index belongs to the cluster.
+    """
     return [int(s1>=thresh_1 and s2>=thresh_2 and s3>=thresh_clo) for s1, s2, s3 in zip(scores_1,scores_2,scores_clo)]
 
 def apply_reverse_sdb_mapping_to_sequences(fsp_1, fsp_2, fsp_c, sdb):
+    """
+    
+
+    Parameters
+    -----------
+    
+
+    Returns
+    -----------
+    
+    """
     transf_fsp_1 = [(tuple(sdb.idx_to_activity[idx] for idx in seq), sup) for (seq, sup) in fsp_1]
     transf_fsp_2 = [(tuple(sdb.idx_to_activity[idx] for idx in seq), sup) for (seq, sup) in fsp_2]
     transf_fsp_c = [(tuple(sdb.idx_to_activity[idx] for idx in seq), sup) for (seq, sup) in fsp_c]

@@ -6,6 +6,17 @@ from pm4py.objects.log.exporter.xes import factory as xes_exporter
 import csv
 
 def check_sample_list(csv_path, log_path):
+    """
+    
+
+    Parameters
+    -----------
+    
+
+    Returns
+    -----------
+    
+    """
     success = True
     error_str = ""
 
@@ -26,6 +37,17 @@ def check_sample_list(csv_path, log_path):
 
 
 def traceclustering_main(log, clus_dict, cluster_labels, min_sup, lthresh_1, lthresh_2, lthresh_clo, auto_thresh, output_log_path, output_csv_path):
+    """
+
+
+    Parameters
+    -----------
+    
+
+    Returns
+    -----------
+    
+    """
     sample_logs = create_sample_logs(clus_dict, cluster_labels, log)
     clustered_log, clustercsvlist, cluster_fsps = cluster_log(log, sample_logs, cluster_labels, min_sup, lthresh_1, lthresh_2, lthresh_clo, auto_thresh)
     measures = compute_cluster_quality_measures(clustered_log, sample_logs, cluster_labels)

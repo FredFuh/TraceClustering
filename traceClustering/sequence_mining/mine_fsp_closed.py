@@ -15,6 +15,26 @@ def mine_fsp_closed(sdb, min_sup):
     Returns:
         [((int), int)], [((int), int)]: Returns two list of tuples, representing the fsp's of length 1 and the closed ones. A tuple's first entry is the fsp which is a tuple, while the second is the absolute support.
     '''
+    """
+    Mines the frequent sequent patterns (fsp's) of length 1 and the closed fsp's for the given SequenceDB. A simplified version of the algorithm CloFAST is implemented,
+    with the major simplification being that itemsets of sequences from the SequenceDB always have exactly one element. Similar nomenclature as in the paper is used.
+    The respective output fsp's are organized in lists of tuples, where the first entry is the fsp and the second is its absolute support.
+
+    Parameters
+    -----------
+    sdb (SequenceDB)
+        SequenceDB object
+    min_sup (int)
+        The absolute minimum support of a frequent sequence pattern
+
+    Returns
+    -----------
+    cfi ([((int), int)])
+        Closed frequent itemsets, which correspond to fsp's of length 1 due to our assumptions.
+    cfsp ([((int), int)])
+        Closed fsp's.
+    
+    """
     # First build up the sparse id lists (sil) for all 1-itemsets, organised as [[Int]] where an activity index serves as the index to its id list in the sil
     # In contrast to the paper, the sil's store indices of activities (0 indexed) and not positions which start at 1
     # The CIET is not explicitly constructed, because the closed frequent itemsets are exactly the frequent 1-itemsets, since itemsets in our sequences are always of size 1
@@ -54,17 +74,21 @@ def mine_fsp_closed(sdb, min_sup):
     return cfi, cfsp
 
 def build_sils(db, num_activities):
-    '''
-    Constructs the sparse id lists (sil's) of every 1-itemset for a given sequence database and the number of activities num_activities, assuming the activities in the database are 0,..,num_activities-1
+    """
+    Constructs the sparse id lists (sil's) of every 1-itemset for a given sequence database and the number of activities num_activities, assuming the activities in the database are 0,..,num_activities-1.
 
-    Args:
-        db ([[int]]): Sequence database in the form of the list of sequences
-        num_activities (int): Number of different activities in the sequence database
-    
-    Returns:
-        [[[int]]]: List of sil's for each 1-itemset. A sil of type [[int]] is the list of indices of an activity, indexed by the sequence index in the sequence database
-
-    '''
+    Parameters
+    -----------
+    db ([[int]])
+        Sequence database in the form of the list of sequences
+    num_activities (int)
+        Number of different activities in the sequence database
+        
+    Returns
+    -----------
+    sils ([[[int]]])
+        List of sil's for each 1-itemset. A sil of type [[int]] is the list of indices of an activity, indexed by the sequence index in the sequence database
+    """
     # In contrast to the paper, the sil's store indices of activities (0 indexed) and not positions which start at 1
     # Initialise the id-list for every activity as a list of None for each sequence (referred to as null in the paper), using None instead of [] to save memory if the sil is sparse
     sils = [[None for i in range(len(db))] for act in range(num_activities)]
@@ -79,6 +103,9 @@ def build_sils(db, num_activities):
     return sils
 
 class Node:
+    """
+    Class for representing a CSET, where each node has a reference to its child and parent nodes.
+    """
     def __init__(self, seq, vil):
         self.seq = seq
         self.vil = vil
@@ -104,22 +131,73 @@ class Label(Enum):
     PRUNED = 2
 
 def get_first_item_or_none(lst):
+    """
+    Returns the first itemof a list or None if the list is empty
+
+    Parameters
+    -----------
+    lst
+        List
+
+    Returns
+    -----------
+    item
+        First element of the list, or None.
+    
+    """
+    item = None
     if lst:
-        return lst[0]
-    else:
-        return None
+        item = lst[0]
+    return item
 
 def vil_compute_support(vil):
+    """
+    Compute the absolute support from a vertical id list.
+
+    Parameters
+    -----------
+    vil (list)
+        List of activity indices.
+
+    Returns
+    -----------
+    support
+        Support value.
+    
+    """
     # generator to save memory, if slow change to list comprehension
     return sum(1 for id in vil if id is not None)
 
 def get_closed_fsp_from_cset(node, lst):
+    """
+    Traverses a CSET which is given by its root node and appends them to the given list.
+
+    Parameters
+    -----------
+    node
+        Node object representing the root of the CSET.
+    lst
+        List
+    """
     if node.label is Label.CLOSED:
         lst.append((node.seq, vil_compute_support(node.vil)))
     for child in node.get_children():
         get_closed_fsp_from_cset(child, lst)
 
 def sequence_extension(node, min_sup, sils):
+    """
+    Performs the sequence extension step as shown in the paper of CloFAST. Performs this for the sequence represented in a given node.
+
+    Parameters
+    -----------
+    node
+        Node object
+    min_sup
+        Absolute minimum support value
+    sils
+        Sparse id lists for each activity id.
+    
+    """
     check_closure_and_prune(node, sils)
     if node.label is Label.PRUNED:
         return
@@ -162,6 +240,16 @@ def sequence_extension(node, min_sup, sils):
     # Possible optimisation: add self to output list of closed fsp's if the label is still closed
 
 def check_closure_and_prune(node, sils):
+    """
+    Checks for the sequence closure property as described in the CloFAST paper for the sequence stored in node and prunes the CSET if possible.
+
+    Parameters
+    -----------
+    node
+        Node object
+    sils
+        List of sparse id lists for each activity
+    """
     # Note that itemset closure does not need to be checked in our case, since all itemsets are of size 1 in the sequences and thus there are no proper supersets
     vils = []
     vils.insert(0,node.vil)
@@ -184,6 +272,28 @@ def check_closure_and_prune(node, sils):
 
 
 def sequence_closure(vil, vil_list, sils, alpha):
+    """
+    Computes the sequence closure predicate as described in the CloFAST paper for all sequences in the database.
+
+    Parameters
+    -----------
+    vil
+        Vertical id list for an activity.
+    vil_list
+        List of vertical id lists for prefixes of sequence alpha.
+    sils
+        List of sparse id lists for each activity
+    alpha ([int])
+        Sequence of activities.
+
+    Returns
+    -----------
+    pred
+        True if the shiftSC holds for all sequences.
+    virt_shift
+        True if a virtual shift was used.
+    
+    """
     pred = True
     virt_shift = False
     vil_alpha = vil_list[-1]
@@ -203,6 +313,34 @@ def sequence_closure(vil, vil_list, sils, alpha):
     return pred, virt_shift
 
 def shiftSC(vilj, vilj_list, sils, alpha_suffix, j):
+    """
+    Computes the sequence closure predicate as described in the CloFAST paper for the sequence with index j.
+
+    Parameters
+    -----------
+    vilj (int)
+        Index of the end of the subsequence in the sequence with index j.
+
+    vilj_list ([int])
+        List of vil values for sequence with index j for the subsequences of alpha.
+
+    sils
+        List of sparse id lists for each activity
+
+    alpha_suffix
+        Suffix of the sequence alpha to be checked.
+
+    j (int)
+        Index of the sequence in the database.
+
+    Returns
+    -----------
+    pred
+        True if the shiftSC holds.
+    shifted
+        True if a virtual shift was used.
+    
+    """
     shifted = False
     if (vilj is None) or (len(vilj_list) == 0):
         return False, shifted

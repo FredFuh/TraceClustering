@@ -1,7 +1,26 @@
 from collections import defaultdict
 
-# Compute estimated cluster quality measures (recall, precision, f1-score), formula found in the paper by X. Lu
 def compute_cluster_quality_measures(clustered_log, sample_logs, cluster_labels):
+    """
+    Compute estimated cluster quality measures (recall, precision, f1-score) given a clustered log where traces contain a cluster attribute and the sample logs; formulas as in the paper by X. Lu.
+
+    Parameters
+    -----------
+    clustered_log
+        EventLog object
+    sample_logs (list)
+        List of EventLog objects
+    cluster_labels ([str])
+        List of cluster labels.
+
+    Returns
+    -----------
+    measures (dict)
+        Dictionary mapping a cluster label to the tuple of measurements where
+            recall -> Estimated recall
+            precision -> Estimated precision
+            f1_score -> Estimated F1 score
+    """
     # Assuming the traces of the sample logs have an trace attribute 'original_log_idx' which is the index of said trace in the clustered_log
     # Assuming clustered_log contains a trace attribute 'cluster'
     #num_clusters = len(sample_logs)+1   # including 'dummy' cluster 0, which are the traces which were not assigned to a cluster
@@ -23,6 +42,27 @@ def compute_cluster_quality_measures(clustered_log, sample_logs, cluster_labels)
 
     
 def compute_precision_and_recall(clustered_log, sample_log, cluster_size, cluster_label):
+    """
+    Compute estimated precision and recall for a specific cluster given a clustered log where traces contain a cluster attribute and the sample log; formulas as in the paper by X. Lu.
+
+    Parameters
+    -----------
+    clustered_log
+        EventLog object
+    sample_log
+        EventLog object
+    cluster_size (int)
+        Number of traces in the cluster.
+    cluster_label
+        Label of the cluster
+
+    Returns
+    -----------
+    precision
+        Estimated precision
+    recall
+        Estimated recall
+    """
     len_sample = len(sample_log)
     # Compute the size of the intersection of the sample log and the cluster
     intersec_size = 0
@@ -41,6 +81,22 @@ def compute_precision_and_recall(clustered_log, sample_log, cluster_size, cluste
     return precision, recall
 
 def compute_f1_score(precision, recall):
+    """
+    Compute the F1 score given a precision and recall value.
+
+    Parameters
+    -----------
+    precision
+        Precision value.
+    recall
+        Recall value.
+
+    Returns
+    -----------
+    score
+        F! score.
+    
+    """
     score = 0
     if precision + recall != 0:
         score = 2 * (precision * recall) / (precision + recall)

@@ -8,24 +8,36 @@ from copy import deepcopy
 from collections import defaultdict
 
 def read_sample_list(log_path, csv_path):
-    """ 
-    Checks if all the given cases exist in the log and creates a dictionary object for each cluster
-        
-    Input: CSV file path, Sequences seq
-           CSV file - Format as below
+    """
+    Reads the log and csv file containing clustering information, then checks if all the given cases exist in the log and creates a dictionary mapping cluster labels to a list of case ids.
+    CSV file format:
                 file[][0] = case id 
                 file[][1] = cluster
-           Sequences - Dictionary output of build_sequences()
-               
-    Output: Result - Dictionary with different clusters as key, and its values are list of caseids
-            Missing cases - Case ids that do not exist in the log
-            Log - The EventLog object from the log stored in log_path
+
+
+    Parameters
+    -----------
+    log_path
+        Path to the XES log file
+    csv_path
+        Path to the csv file containing clustering information for the sample sets
+
+    Returns
+    -----------
+    clus_dict (dict)
+        Dictionary using the cluster labels as keys and the corresponding list of case ids as values.
+    cluster_labels (list)
+        The labels of the clusters used in the csv file
+    missing_cases (list)
+        Case ids which are contained in the csv file but not in the log
+    log
+        EventLog object
     """
 
     # TODO: error handling?
     log = xes_importer.import_log(log_path)
 
-    result = defaultdict(list)
+    clus_dict = defaultdict(list)
     missing_cases = []
     case_ids = [trace.attributes['concept:name'] for trace in log]
         
@@ -34,22 +46,25 @@ def read_sample_list(log_path, csv_path):
         # TODO: error handling?
         for row in csv_reader:
             if row[0] in case_ids:
-                result[row[1]].append(row[0])
+                clus_dict[row[1]].append(row[0])
             else:
                 missing_cases.append(row[0])
 
-    cluster_labels = list(result.keys())
+    cluster_labels = list(clus_dict.keys())
 
-    return result, cluster_labels, missing_cases, log
+    return clus_dict, cluster_labels, missing_cases, log
 
 
 def write_sample_logs_to_fs(clus_dict, filepath):
     """
-    Build separate logs with traces corresponding to each cluster
-    
-    Input: Dictionary output of check_sample_list(), XES log filepath
-    
-    Output: No return value
+    Build separate logs with traces corresponding to each cluster and write them to the filesystem.
+
+    Parameters
+    -----------
+    clus_dict (dict)
+        Dictionary using the cluster labels as keys and the corresponding list of case ids as values.
+    filepath
+        Path to the XES log file
     """
     log = xes_importer.import_log(filepath)
 
@@ -69,6 +84,23 @@ def create_sample_logs(clus_dict, cluster_labels, log):
     Input: Dictionary output of check_sample_list(), EventLog object
     
     Output: List of sample logs as EventLog objects
+    """
+    """
+    Computes the sample logs from the full log given a dictionary mapping cluster labels to case ids.
+
+    Parameters
+    -----------
+    clus_dict (dict)
+        Dictionary using the cluster labels as keys and the corresponding list of case ids as values.
+    cluster_labels (list)
+        The labels of the clusters to be discovered
+    log
+        EventLog object
+
+    Returns
+    -----------
+    sample_logs (list)
+        List of EventLog objects
     """
     sample_logs = []
 

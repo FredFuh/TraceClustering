@@ -4,14 +4,28 @@ from pm4py.objects.log.log import EventLog
 from math import ceil
 
 def mine_fsp(log, min_sup):
-    ''' 
+    """
     Mines the frequent sequent patterns (fsp's) of length 1,2 and the closed fsp's for the given event log and minimum support.
     The respective fsp's are organized in lists of tuples, where the first entry is the fsp and the second is its absolute support.
-    
-    input: pm4py EventLog object, min_sup (absolute)
-    
-    output: (fsp_1, fsp_2, fsp_c, sdb)
-    '''
+
+    Parameters
+    -----------
+    log
+        EventLog object
+    min_sup (int)
+        Absolute minimum support value
+
+    Returns
+    -----------
+    fsp_1 ([((int), int)])
+        Fsp's of length 1
+    fsp_2 ([((int), int)])
+        Fsp's of length 2
+    fsp_c ([((int), int)])
+        Closed fsp's
+    sdb
+        SequenceDB object created during the mining
+    """
     
     sdb = log_to_sdb(log)
 
@@ -22,7 +36,22 @@ def mine_fsp(log, min_sup):
     return fsp_1, fsp_2, fsp_c, sdb
 
 def mine_fsp_2(sdb, min_sup):
+    """
+    Mines the frequent sequence patterns of length 2 given a log in sequence database representation and the absolute minimum support.
 
+    Parameters
+    -----------
+    sdb
+        SequenceDB object
+    min_sup (int)
+        Absolute minimum support value
+
+    Returns
+    -----------
+    fsp_2 ([((int), int)])
+        Fsp's of length 2
+
+    """
     db = sdb.db
     num_activities = sdb.num_activities
     # Using sparse id lists and vertical id lists similar to the ones in the closed fsp algorithm
@@ -62,6 +91,22 @@ def mine_fsp_2(sdb, min_sup):
     return fsp_2
 
 def get_first_larger_element_or_none(lst, bound):
+    """
+    Returns the first element of a list that is larger then the given bound, or None if such an element does not exist.
+
+    Parameters
+    -----------
+    lst ([int])
+        List
+    bound (int)
+        Minimum bound value
+
+    Returns
+    -----------
+    item (int)
+        The first larger element to be found, or None
+    
+    """
     if lst is None:
         return None
     else:
@@ -71,6 +116,31 @@ def get_first_larger_element_or_none(lst, bound):
     return None
 
 def mine_fsp_from_sample(log, min_sup, training_set_fraction=0.5):
+    """
+    Mines the frequent sequent patterns (fsp's) of length 1,2 and the closed fsp's for the given sample log and minimum support.
+    The fsp's are computed on the first traces of a fraction of the given log, which can be set as a parameter.
+    The respective fsp's are organized in lists of tuples, where the first entry is the fsp and the second is its absolute support.
+
+    Parameters
+    -----------
+    log
+        EventLog object
+    min_sup (int)
+        Absolute minimum support value
+    training_set_fraction (float)
+        Fraction of the number of traces to be used for sequence mining
+
+    Returns
+    -----------
+    fsp_1 ([((int), int)])
+        Fsp's of length 1
+    fsp_2 ([((int), int)])
+        Fsp's of length 2
+    fsp_c ([((int), int)])
+        Closed fsp's
+    sdb
+        SequenceDB object created during the mining
+    """
     training_set_size = ceil(len(log)*training_set_fraction)
     min_sup_abs = ceil(training_set_size * min_sup)
     training_log = EventLog(log[:training_set_size])
