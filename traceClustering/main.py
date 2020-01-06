@@ -36,12 +36,12 @@ def check_sample_list(csv_path, log_path):
         clus_dict, cluster_labels, missing_cases, log = read_sample_list(csv_path, log_path)
     except:
         success = False
-        error_str = "Could not read log or csv file"
+        error_str = "Could not read the log or csv file. Please reupload them."
         return success, error_str, None, None, None
 
     if missing_cases:
         success = False
-        error_str = "Sample csv file contained unknown case ids"
+        error_str = "Sample csv file contained the following unknown case ids: " + ", ".join(missing_cases) + ". You might want to go back and reupload it."
 
     # check length of sample logs here? If we want to enforce minimum length
 

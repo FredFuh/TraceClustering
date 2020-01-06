@@ -34,7 +34,6 @@ def read_sample_list(log_path, csv_path):
         EventLog object
     """
 
-    # TODO: error handling?
     log = xes_importer.import_log(log_path)
 
     clus_dict = defaultdict(list)
@@ -43,9 +42,10 @@ def read_sample_list(log_path, csv_path):
         
     with open(csv_path, 'r') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
-        # TODO: error handling?
         for row in csv_reader:
-            if row[0] in case_ids:
+            if len(row) != 2:
+                raise Exception()
+            elif row[0] in case_ids:
                 clus_dict[row[1]].append(row[0])
             else:
                 missing_cases.append(row[0])

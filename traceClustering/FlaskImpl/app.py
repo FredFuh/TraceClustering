@@ -83,11 +83,11 @@ def upload_log_file():
         if request.method == 'POST':
             # check if the post request has the file part
             if not request.files:
-                flash('No file part')
+                flash('No file part.')
                 return redirect(request.url)
             file = request.files['file']
             if file.filename == '':
-                flash('No file selected for uploading')
+                flash('No file selected for uploading.')
                 return redirect(request.url)
             if file and allowed_log_file(file.filename):
                 filename = session.get('username') +".xes"
@@ -96,12 +96,12 @@ def upload_log_file():
                 # flash('File successfully uploaded')
                 return render_template('sample.html')
             else:
-                flash('Allowed file types are xes')
+                flash('The only allowed file type is xes.')
                 return redirect(request.url)
         elif request.method == 'GET':
             return render_template('log.html')
     else:
-        flash('Please enter a Projectname first')
+        flash('Please enter a Projectname first.')
         return redirect('/')
 
 
@@ -122,25 +122,31 @@ def upload_sample_file():
         if request.method == 'POST':
             # check if the post request has the file part
             if not request.files:
-                flash('No file part')
+                flash('No file part.')
                 return redirect(request.url)
             file = request.files['file']
             if file.filename == '':
-                flash('No file selected for uploading')
+                flash('No file selected for uploading.')
                 return redirect(request.url)
             if file and allowed_sample_file(file.filename):
                 filename = session.get("username") + ".csv"
                 file.save(os.path.join(app.config['STORAGE_PATH'], filename))
                 # flash('File successfully uploaded')
                 success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+
+                if not success:
+                    flash(error_str)
+                    if log is None or clus_dict is None:
+                        return redirect('/log')
+
                 return render_template('thresholds.html', cluster_labels=cluster_labels)
             else:
-                flash('Allowed file types are csv')
+                flash('The only allowed file type is csv.')
                 return redirect(request.url)
         elif request.method == 'GET':
             return render_template('sample.html')
     else:
-        flash('Please enter a Projectname first')
+        flash('Please enter a Projectname first.')
         return redirect('/')
 
 
@@ -167,15 +173,15 @@ def thresholds():
             xes_path = os.path.join(app.config['OUTPUT'], session.get("username") + "_clustered.xes")
             csv_path = os.path.join(app.config['OUTPUT'], session.get("username") + "_clustered.csv")
 
-            support = int(req.get("support"))/100
-            thresh1 = list(map(int, req.getlist("threshold1")))
-            thresh1[:] = [val / 100 for val in thresh1]
-            thresh2 = list(map(int, req.getlist("threshold2")))
-            thresh2[:] = [val / 100 for val in thresh2]
-            thresh3 = list(map(int, req.getlist("threshold3")))
-            thresh3[:] = [val / 100 for val in thresh3]
+            support = float(req.get("support"))
+            thresh1 = list(map(float, req.getlist("threshold1")))
+            #thresh1[:] = [val / 100 for val in thresh1]
+            thresh2 = list(map(float, req.getlist("threshold2")))
+            #thresh2[:] = [val / 100 for val in thresh2]
+            thresh3 = list(map(float, req.getlist("threshold3")))
+            #thresh3[:] = [val / 100 for val in thresh3]
 
-            success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+            _, _, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
             #print(success)
             #print(error_str)
             #print(clus_dict)
