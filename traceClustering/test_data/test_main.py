@@ -21,7 +21,7 @@ print(log[0])
 output_csv_path = os.path.join(os.path.dirname(__file__), '..', 'out/csvclustering.csv').replace('\\', '/')
 output_log_path = os.path.join(os.path.dirname(__file__), '..', 'out/clustered.xes').replace('\\', '/')
 
-cluster_fsps, measures = traceclustering_main(log, clus_dict, cluster_labels, 0.99, [], [], [], True, output_log_path, output_csv_path)
+cluster_fsps, measures = traceclustering_main(log, clus_dict, cluster_labels, 0.99, [0.5, 0.5], [0.5, 0.5], [0.5, 0.5], False, output_log_path, output_csv_path)
 
 print(measures)
 print(cluster_fsps)

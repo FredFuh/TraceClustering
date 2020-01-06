@@ -48,6 +48,10 @@ div#loading {
 		<label for="relativeSupport" class="float-left">0.0</label>
 		<label for="relativeSupport" class="float-right">1.0</label>
     </div>
+	<div class="form-group">
+		<input type="checkbox" id="autothresh" value="True" name="auto_thresh" autocomplete="off" style="margin-left:-20px">
+		<label for="autothresh">Use automatically determined threshold values? If checked, values entered below are ignored. (Warning: This increases computation time.)</label>
+    </div>
 
 	<br>
 	{% for cluster in cluster_labels %}

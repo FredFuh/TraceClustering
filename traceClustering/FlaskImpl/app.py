@@ -59,7 +59,15 @@ def home():
         req = request.form
         if not req.get('username') is None:
             session['username'] = req.get("username")
-            return render_template('log.html')
+
+            # Check if log file was already uploaded
+            dirlist = os.listdir(app.config['STORAGE_PATH'])
+            log_uploaded_before = False
+            if session.get('username') +".xes" in dirlist:
+                log_uploaded_before = True
+            print(log_uploaded_before)
+            
+            return render_template('log.html', log_uploaded_before=log_uploaded_before)
         else:
             return render_template('home.html', project_names=[find_projects()])
     elif request.method == 'GET':
@@ -81,9 +89,16 @@ def upload_log_file():
     """
     if not session.get('username') is None:
         if request.method == 'POST':
+            # If the log file is already present in the file system and the user chose to skip
+            if 'skip' in request.form:
+                dirlist = os.listdir(app.config['STORAGE_PATH'])
+                csv_uploaded_before = False
+                if session.get('username') +".csv" in dirlist:
+                    csv_uploaded_before = True
+                return render_template('sample.html', csv_uploaded_before=csv_uploaded_before)
             # check if the post request has the file part
             if not request.files:
-                flash('No file part.')
+                flash('No file selected for uploading.')
                 return redirect(request.url)
             file = request.files['file']
             if file.filename == '':
@@ -94,7 +109,12 @@ def upload_log_file():
                 #print(filename)
                 file.save(os.path.join(app.config['STORAGE_PATH'], filename))
                 # flash('File successfully uploaded')
-                return render_template('sample.html')
+                # Check if csv file was already uploaded
+                dirlist = os.listdir(app.config['STORAGE_PATH'])
+                csv_uploaded_before = False
+                if session.get('username') +".csv" in dirlist:
+                    csv_uploaded_before = True
+                return render_template('sample.html', csv_uploaded_before=csv_uploaded_before)
             else:
                 flash('The only allowed file type is xes.')
                 return redirect(request.url)
@@ -120,11 +140,22 @@ def upload_sample_file():
     """
     if not session.get('username') is None:
         if request.method == 'POST':
+            # If the log file is already present in the file system and the user chose to skip
+            if 'skip' in request.form:
+                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+
+                if not success:
+                    flash(error_str)
+                    if log is None or clus_dict is None:
+                        return redirect('/log')
+
+                return render_template('thresholds.html', cluster_labels=cluster_labels)
             # check if the post request has the file part
             if not request.files:
-                flash('No file part.')
+                flash('No file selected for uploading.')
                 return redirect(request.url)
             file = request.files['file']
+            print(request.form.keys)
             if file.filename == '':
                 flash('No file selected for uploading.')
                 return redirect(request.url)
@@ -168,12 +199,16 @@ def thresholds():
     if not session.get('username') is None:
         if request.method == 'POST':
             # TODO: Check if automatic threshold is enables, accodringly call the function.
-
             req = request.form
             xes_path = os.path.join(app.config['OUTPUT'], session.get("username") + "_clustered.xes")
             csv_path = os.path.join(app.config['OUTPUT'], session.get("username") + "_clustered.csv")
 
             support = float(req.get("support"))
+            
+            auto_thresh = False
+            if req.get("auto_thresh"):
+                auto_thresh = True
+
             thresh1 = list(map(float, req.getlist("threshold1")))
             #thresh1[:] = [val / 100 for val in thresh1]
             thresh2 = list(map(float, req.getlist("threshold2")))
@@ -188,7 +223,7 @@ def thresholds():
             #print(cluster_labels)
             #print(log[0])
 
-            cluster_fsps, measures = traceclustering_main(log, clus_dict, cluster_labels, support, thresh1, thresh2, thresh3, True, xes_path, csv_path)
+            cluster_fsps, measures = traceclustering_main(log, clus_dict, cluster_labels, support, thresh1, thresh2, thresh3, auto_thresh, xes_path, csv_path)
 
             #print(measures)
             #print(cluster_fsps)
