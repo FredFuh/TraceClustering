@@ -27,7 +27,7 @@ def cluster_log(log, sample_logs, cluster_labels, min_sup, lthresh_1, lthresh_2,
     min_sup (int)
         The relative minimum support for fsp discovery
     lthresh_1, lthresh_2, lthresh_clo ([float])
-        Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain
+        Thresholds for each cluster for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain
     auto_thresh (Bool)
         Boolean indicating whether automatically set thresholds should be used
 
@@ -257,7 +257,7 @@ def get_sequence_scores(db, num_activities, fsp_1, fsp_2, fsp_c):
         List of sequences with activities as integers.
     num_activities (int)
         Number of different activities.
-    fsp_1, fsp_2, fsp_c ([((str), int)])
+    fsp_1, fsp_2, fsp_c ([((int), int)])
         Fsp's of length 1,2 or closed with their appropriate absolute support during mining.
 
     Returns
@@ -397,15 +397,19 @@ def get_clustering_from_scores(scores_1, scores_2, scores_clo, thresh_1, thresh_
 
 def apply_reverse_sdb_mapping_to_sequences(fsp_1, fsp_2, fsp_c, sdb):
     """
-    
+    Transforms the sets of frequent sequence patterns from activities in their integer representation to the original string representation as saved in the sequence database.
 
     Parameters
     -----------
-    
+    fsp_1, fsp_2, fsp_c ([((int), int)])
+        Fsp's of length 1,2 or closed with their appropriate absolute support during mining, in integer representation.
+    sdb
+        SequenceDB object
 
     Returns
     -----------
-    
+    transf_fsp_1, transf_fsp_2, transf_fsp_c ([((str), int)])
+        Fsp's of length 1,2 or closed with their appropriate absolute support during mining, in string representation.
     """
     transf_fsp_1 = [(tuple(sdb.idx_to_activity[idx] for idx in seq), sup) for (seq, sup) in fsp_1]
     transf_fsp_2 = [(tuple(sdb.idx_to_activity[idx] for idx in seq), sup) for (seq, sup) in fsp_2]

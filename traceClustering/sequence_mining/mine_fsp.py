@@ -126,7 +126,7 @@ def mine_fsp_from_sample(log, min_sup, training_set_fraction=0.5):
     log
         EventLog object
     min_sup (int)
-        Absolute minimum support value
+        Relative minimum support value between 0 and 1 used for sequence mining
     training_set_fraction (float)
         Fraction of the number of traces to be used for sequence mining
 
