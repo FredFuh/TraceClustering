@@ -4,6 +4,29 @@
 
 {% block content %}
    <div class="about">
-     <p>Placeholder for Project Information</p>
+       <h1>Trace Cluster by Using Frequent Sequence Patterns </h1>
+     <p>This project is the pm4py Implementation of the algorithm proposed in
+         "Trace Clustering on Very Large Event Data in Healthcare Using Frequent Sequence Patterns"
+      by XixiLu et. al.
+         <br>
+         For more information on the algorithm please refer to the article.
+
+     </p>
+       <h2>
+           Usage
+       </h2>
+       <p> For Usage follow the steps given on the webpage. <br>
+       First give your project a name. The page will list all available projects but you
+       can also set a new one. This name is used to identify your project so you can come back later
+       continue working on it without reuploading the data.    <br>
+       Next upload your log in xes format. <br>
+       Next upload the sample log in csv format where the lines are "'traceId','clustername'"
+       with '0' being the name for the remaining items <br>
+       Next define the Thresholds and support values. Either by hand or check the box for automatic
+       threshold computation. For information on the meaning of these values please refer to the article <br>
+       Finally you can view the performance measurements and download the result as an Xesfile or Csvfile
+           <br>
+       </p>
+    <h4>For a more detailed guide on how to use this implementation please refer to the user manual</h4>
    </div>
 {% endblock %}
