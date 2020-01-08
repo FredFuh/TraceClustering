@@ -44,7 +44,7 @@ div#loading {
 	<div class="form-group">
         <label for="relativeSupport">Relative Support: </label>
         <output id="outRelativeSupport" for="relativeSupport" readonly style="border:0; color:#000000; font-weight:bold;"></output>
-		<input type="range" class="custom-range" id="relativeSupport" min="0" max="1" value="0.5" step="0.01" name="support" autocomplete="off" required>      
+		<input type="range" class="custom-range" id="relativeSupport" min="0" max="1" value="0.5" step="0.01" name="support" autocomplete="off" oninput="outRelativeSupport.value=this.value" required>      
 		<label for="relativeSupport" class="float-left">0.0</label>
 		<label for="relativeSupport" class="float-right">1.0</label>
     </div>
@@ -60,27 +60,27 @@ div#loading {
 
 	<div class="form-group">
 		<br>
-    	<label for="threshold1">Relative Threshold 1: </label>
-		<output id="outThreshold1" for="threshold1" readonly style="border:0; color:#000000; font-weight:bold;"></output>
-		<input type="range" class="custom-range" id="threshold1" min="0" max="1" value="0.5" step="0.01" placeholder="Threshold" name="threshold1" autocomplete="off" required>		
-		<label for="threshold1" class="float-left">0.0</label>
-		<label for="threshold1" class="float-right">1.0</label>
+    	<label for="{{cluster}}_threshold1">Relative Threshold 1: </label>
+		<output id="{{cluster}}_threshold1_out" for="{{cluster}}_threshold1" readonly style="border:0; color:#000000; font-weight:bold;">0.5</output>
+		<input type="range" class="custom-range thresholdInp" id="{{cluster}}_threshold1" oninput="myFunction(this.id)" min="0" max="1" value="0.5" step="0.01" placeholder="Threshold" name="threshold1" autocomplete="off" required>		
+		<label for="{{cluster}}_threshold1" class="float-left">0.0</label>
+		<label for="{{cluster}}_threshold1" class="float-right">1.0</label>
   	</div>
   	<div class="form-group">
   		<br>
-    	<label for="threshold2">Relative Threshold 2: </label>
-		<output id="outThreshold2" for="threshold2" readonly style="border:0; color:#000000; font-weight:bold;"></output>
-		<input type="range" class="custom-range" id="threshold2" min="0" max="1" value="0.5" step="0.01" placeholder="Threshold" name="threshold2" autocomplete="off" required>
-		<label for="threshold2" class="float-left">0.0</label>
-		<label for="threshold2" class="float-right">1.0</label>
+    	<label for="{{cluster}}_threshold2">Relative Threshold 2: </label>
+		<output id="{{cluster}}_threshold2_out" for="{{cluster}}_threshold2" readonly style="border:0; color:#000000; font-weight:bold;">0.5</output>
+		<input type="range" class="custom-range thresholdInp" id="{{cluster}}_threshold2" oninput="myFunction(this.id)" min="0" max="1" value="0.5" step="0.01" placeholder="Threshold" name="threshold2" autocomplete="off" required>
+		<label for="{{cluster}}_threshold2" class="float-left">0.0</label>
+		<label for="{{cluster}}_threshold2" class="float-right">1.0</label>
   	</div>
   	<div class="form-group">
   		<br>
-	   	<label for="threshold3">Relative Threshold 3: </label>
-		<output id="outThreshold3" for="threshold3" readonly style="border:0; color:#000000; font-weight:bold;"></output>
-		<input type="range" class="custom-range" id="threshold3" min="0" max="1" value="0.5" step="0.01" placeholder="Threshold" name="threshold3" autocomplete="off" required>
-		<label for="threshold1" class="float-left">0.0</label>
-		<label for="threshold1" class="float-right">1.0</label>
+	   	<label for="{{cluster}}_threshold3">Relative Threshold 3: </label>
+		<output id="{{cluster}}_threshold3_out" for="{{cluster}}_threshold3" readonly style="border:0; color:#000000; font-weight:bold;">0.5</output>
+		<input type="range" class="custom-range thresholdInp" id="{{cluster}}_threshold3" oninput="myFunction(this.id)" min="0" max="1" value="0.5" step="0.01" placeholder="Threshold" name="threshold3" autocomplete="off" required>
+		<label for="{{cluster}}_threshold3" class="float-left">0.0</label>
+		<label for="{{cluster}}_threshold3" class="float-right">1.0</label>
   	</div>
 
 	{% endfor %}
@@ -92,31 +92,12 @@ div#loading {
 </div>
 <div id="loading"></div>
 
-
 <script>
 
-var threshold1 = document.getElementById("threshold1");
-var outThreshold1 = document.getElementById("outThreshold1");
-outThreshold1.value = threshold1.value;
-
-threshold1.oninput = function() {
-  outThreshold1.value = this.value;
-}
-
-var threshold2 = document.getElementById("threshold2");
-var outThreshold2 = document.getElementById("outThreshold2");
-outThreshold2.value = threshold2.value;
-
-threshold2.oninput = function() {
-  outThreshold2.value = this.value;
-}
-
-var threshold3 = document.getElementById("threshold3");
-var outThreshold3 = document.getElementById("outThreshold3");
-outThreshold3.value = threshold3.value;
-
-threshold3.oninput = function() {
-  outThreshold3.value = this.value;
+function myFunction(id){
+	var input = document.getElementById(id);
+	var outThreshold = document.getElementById(id+'_out');
+  	outThreshold.value = input.value;
 }
 
 var relativeSupport = document.getElementById("relativeSupport");
