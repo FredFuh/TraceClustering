@@ -55,6 +55,7 @@ def home():
         :returns
             Upload log page
     """
+    session.pop('username', None)
     if request.method == 'POST':
         req = request.form
         if not req.get('username') is None:
