@@ -216,12 +216,16 @@ def thresholds():
             thresh3 = list(map(float, req.getlist("threshold3")))
             #thresh3[:] = [val / 100 for val in thresh3]
 
-            _, _, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+            success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
             #print(success)
             #print(error_str)
             #print(clus_dict)
             #print(cluster_labels)
             #print(log[0])
+            if not success:
+                flash(error_str)
+                if log is None or clus_dict is None:
+                    return redirect('/log')
 
             cluster_fsps, measures = traceclustering_main(log, clus_dict, cluster_labels, support, thresh1, thresh2, thresh3, auto_thresh, xes_path, csv_path)
 
