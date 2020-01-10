@@ -4,6 +4,9 @@
 
 {% block content %}
 <h2>Select the log and upload</h2>
+{% if logname %}
+<h3> Currently {{logname}} is the Logfile for this project</h3>
+{%endif%}
 <p>
 	{% with messages = get_flashed_messages() %}
 	  {% if messages %}

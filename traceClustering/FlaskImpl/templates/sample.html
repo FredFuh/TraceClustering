@@ -24,8 +24,17 @@
 		</div>
 	</div>
 	<button type="submit" class="btn btn-primary" value="Upload">Upload</button>
-	{% if csv_uploaded_before %}
-	  <button type="submit" class="btn btn-primary" name="skip" value="Skip">Skip (Use already uploaded file)</button>
-	{% endif %}
 </form>
+<div>
+	{%if samples%}
+{% for name in samples %}
+	<br>
+	<form method="POST" action="/sample" enctype="multipart/form-data">
+
+	<button type="submit" class="btn btn-primary" name="Sample" value={{name}}>Choose {{name}} as sample log</button>
+	</form>
+
+{%endfor%}
+	{%endif%}
+</div>
 {% endblock %}

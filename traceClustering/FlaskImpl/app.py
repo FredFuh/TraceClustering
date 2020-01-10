@@ -11,6 +11,39 @@ app.config['SAMPLE_FORMAT'] = ['csv']
 app.secret_key = "secret key"
 app.config['OUTPUT'] = "output/"
 
+def replaceSample(filename, newsample):
+    """
+    replace the oldest sample with the new one
+    :param filename:
+    :return:
+    """
+    with open(filename, "r") as f:
+        data = f.readlines()
+
+    toRemove = data[1]
+    data[1] = data[2]
+    data[2] = data[3]
+    data[3] = newsample+'\n'
+    with open(filename, "w") as f:
+        f.writelines(data)
+    os.remove(app.config['STORAGE_PATH'] + toRemove[:-1])
+def find_samples(filename):
+    f = open(filename, "r")
+    f.readline()
+    names = []
+    first = f.readline()
+    if first:
+        names.append(first)
+    second = f.readline()
+    if second:
+        names.append(second)
+    third = f.readline()
+    if third:
+        names.append(third)
+    f.close()
+    return names
+
+
 def find_projects():
     """
     list all currently created (with a stored xes file) projects
@@ -20,7 +53,7 @@ def find_projects():
     dirlist = os.listdir(app.config['STORAGE_PATH'])
     message = "Currently there exist the following projects:"
     for f in dirlist:
-        if f.endswith('.xes'):
+        if f.endswith('.txt'):
             message += f[:-4]
             message += ", "
     return message
@@ -60,15 +93,16 @@ def home():
         req = request.form
         if not req.get('username') is None:
             session['username'] = req.get("username")
-
-            # Check if log file was already uploaded
-            dirlist = os.listdir(app.config['STORAGE_PATH'])
-            log_uploaded_before = False
-            if session.get('username') +".xes" in dirlist:
-                log_uploaded_before = True
-            print(log_uploaded_before)
-            
-            return render_template('log.html', log_uploaded_before=log_uploaded_before)
+            # create txt file
+            file = open(app.config['STORAGE_PATH'] + req.get("username")+ ".txt", "a+")
+            file.seek(0)
+            logname = file.readline()
+            if logname:
+                print("logname:", logname)
+                return render_template('log.html', log_uploaded_before=True, logname=logname)
+            else:
+                log_uploaded_before = False
+                return render_template('log.html', log_uploaded_before=False)
         else:
             return render_template('home.html', project_names=[find_projects()])
     elif request.method == 'GET':
@@ -92,11 +126,12 @@ def upload_log_file():
         if request.method == 'POST':
             # If the log file is already present in the file system and the user chose to skip
             if 'skip' in request.form:
-                dirlist = os.listdir(app.config['STORAGE_PATH'])
-                csv_uploaded_before = False
-                if session.get('username') +".csv" in dirlist:
-                    csv_uploaded_before = True
-                return render_template('sample.html', csv_uploaded_before=csv_uploaded_before)
+                names = find_samples(app.config['STORAGE_PATH'] + session.get('username')+ ".txt")
+                print("names:", names)
+                if names:
+                    return render_template('sample.html', csv_uploaded_before=True, samples=names)
+                else:
+                    return render_template('sample.html', csv_uploaded_before=False)
             # check if the post request has the file part
             if not request.files:
                 flash('No file selected for uploading.')
@@ -107,20 +142,42 @@ def upload_log_file():
                 return redirect(request.url)
             if file and allowed_log_file(file.filename):
                 filename = session.get('username') +".xes"
-                #print(filename)
-                file.save(os.path.join(app.config['STORAGE_PATH'], filename))
+                # store filename into username.txt in first line
+                with open(app.config['STORAGE_PATH'] + session.get('username')+".txt","r") as f:
+                    data = f.readlines()
+                if data:
+                    data[0] = file.filename+'\n'
+                    with open(app.config['STORAGE_PATH'] + session.get('username')+".txt","w") as f:
+                        f.writelines(data)
+                else:
+                    with open(app.config['STORAGE_PATH']+ session.get('username')+".txt","w") as f:
+                        f.write(file.filename + '\n')
+                file.save(os.path.join(app.config['STORAGE_PATH'], session.get('username')+".xes"))
                 # flash('File successfully uploaded')
                 # Check if csv file was already uploaded
-                dirlist = os.listdir(app.config['STORAGE_PATH'])
-                csv_uploaded_before = False
-                if session.get('username') +".csv" in dirlist:
-                    csv_uploaded_before = True
-                return render_template('sample.html', csv_uploaded_before=csv_uploaded_before)
+                names = find_samples(app.config['STORAGE_PATH'] + session.get('username') + ".txt")
+                print("names", names)
+                if names:
+                    return render_template('sample.html', csv_uploaded_before=True, samples=names)
+                else:
+                    return render_template('sample.html', csv_uploaded_before=False)
             else:
                 flash('The only allowed file type is xes.')
                 return redirect(request.url)
         elif request.method == 'GET':
-            return render_template('log.html')
+            try:
+                f = open(app.config['STORAGE_PATH']+ session.get("username")+ ".txt", "r")
+                filename = f.readline()
+                f.close()
+                if os.path.getsize(app.config['STORAGE_PATH'] + session.get('username') + ".txt") > 0:
+                    logname = filename
+                    return render_template('log.html', log_uploaded_before=True, logname=logname)
+                else:
+                    return render_template('log.html', log_uploaded_before=False)
+            except Exception as e:
+                print(e)
+                return render_template('log.html')
+
     else:
         flash('Please enter a Projectname first.')
         return redirect('/')
@@ -142,8 +199,9 @@ def upload_sample_file():
     if not session.get('username') is None:
         if request.method == 'POST':
             # If the log file is already present in the file system and the user chose to skip
-            if 'skip' in request.form:
-                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+            if 'Sample' in request.form:
+                print(request.form['Sample'])
+                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join.app.config['STORAGE_PATH']+request.form['Sample'])
 
                 if not success:
                     flash(error_str)
@@ -161,10 +219,34 @@ def upload_sample_file():
                 flash('No file selected for uploading.')
                 return redirect(request.url)
             if file and allowed_sample_file(file.filename):
-                filename = session.get("username") + ".csv"
-                file.save(os.path.join(app.config['STORAGE_PATH'], filename))
+                name = app.config['STORAGE_PATH'] + session.get('username') + ".txt"
+                f = open(name, "r")
+                f.seek(0)
+                f.readline()
+                s1 = f.readline()
+                s2 = f.readline()
+                s3 = f.readline()
+                f.close()
+                f = open(name, "a")
+                f.seek(0)
+                if s1:
+
+                    if s2:
+                        if s3:
+                            replaceSample(name, file.filename)
+                        else:
+                            f.seek(3)
+                            f.write(file.filename + '\n')
+                    else:
+                        f.seek(2)
+                        f.write(file.filename + '\n')
+                else:
+                    f.seek(1)
+                    f.write(file.filename + '\n')
+
+                file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
                 # flash('File successfully uploaded')
-                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], file.filename))
 
                 if not success:
                     flash(error_str)
@@ -176,7 +258,11 @@ def upload_sample_file():
                 flash('The only allowed file type is csv.')
                 return redirect(request.url)
         elif request.method == 'GET':
-            return render_template('sample.html')
+            names = find_samples(app.config['STORAGE_PATH'] + session.get('username')+ ".txt")
+            if names:
+                return render_template('sample.html', samples=names)
+            else:
+                return render_template('sample.html')
     else:
         flash('Please enter a Projectname first.')
         return redirect('/')
@@ -235,7 +321,8 @@ def thresholds():
 
             return render_template('measures.html', cluster_labels=cluster_labels, cluster_fsps=cluster_fsps, measures=measures)
         elif request.method == 'GET':
-            return render_template('thresholds.html')
+            flash("Please choose a sample first")
+            return redirect('/sample')
     else:
         flash('Please enter a Projectname first')
         return redirect('/')
