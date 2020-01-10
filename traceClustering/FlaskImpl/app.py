@@ -201,7 +201,8 @@ def upload_sample_file():
             # If the log file is already present in the file system and the user chose to skip
             if 'Sample' in request.form:
                 print(request.form['Sample'])
-                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join.app.config['STORAGE_PATH']+request.form['Sample'])
+                session['samplefile'] = os.path.join(app.config['STORAGE_PATH']+request.form['Sample'])
+                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH']+request.form['Sample']))
 
                 if not success:
                     flash(error_str)
@@ -243,11 +244,11 @@ def upload_sample_file():
                 else:
                     f.seek(1)
                     f.write(file.filename + '\n')
-
+                f.close()
                 file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
                 # flash('File successfully uploaded')
                 success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], file.filename))
-
+                session['samplefile'] = os.path.join(app.config['STORAGE_PATH'], file.filename)
                 if not success:
                     flash(error_str)
                     if log is None or clus_dict is None:
@@ -289,7 +290,12 @@ def thresholds():
             req = request.form
             xes_path = os.path.join(app.config['OUTPUT'], session.get("username") + "_clustered.xes")
             csv_path = os.path.join(app.config['OUTPUT'], session.get("username") + "_clustered.csv")
+            if not session.get('samplefile') is None:
+                samplefile = session.get('samplefile')
 
+            else:
+                flash("Please choose sample file first")
+                return upload_sample_file()
             support = float(req.get("support"))
             
             auto_thresh = False
@@ -303,7 +309,7 @@ def thresholds():
             thresh3 = list(map(float, req.getlist("threshold3")))
             #thresh3[:] = [val / 100 for val in thresh3]
 
-            success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".csv"))
+            success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), samplefile)
             #print(success)
             #print(error_str)
             #print(clus_dict)
@@ -318,7 +324,7 @@ def thresholds():
 
             #print(measures)
             #print(cluster_fsps)
-
+            session.pop('samplefile')
             return render_template('measures.html', cluster_labels=cluster_labels, cluster_fsps=cluster_fsps, measures=measures)
         elif request.method == 'GET':
             flash("Please choose a sample first")
