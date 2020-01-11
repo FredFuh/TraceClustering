@@ -26,7 +26,10 @@ def replaceSample(filename, newsample):
     data[3] = newsample+'\n'
     with open(filename, "w") as f:
         f.writelines(data)
-    os.remove(app.config['STORAGE_PATH'] + toRemove[:-1])
+    deletefile = filename[:-4] + '_' + toRemove[:-1]
+    print(deletefile)
+    os.remove(deletefile)
+
 def find_samples(filename):
     f = open(filename, "r")
     f.readline()
@@ -201,8 +204,8 @@ def upload_sample_file():
             # If the log file is already present in the file system and the user chose to skip
             if 'Sample' in request.form:
                 print(request.form['Sample'])
-                session['samplefile'] = os.path.join(app.config['STORAGE_PATH']+request.form['Sample'])
-                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH']+request.form['Sample']))
+                session['samplefile'] = os.path.join(app.config['STORAGE_PATH'], session.get('username') + '_' + request.form['Sample'])
+                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"),session['samplefile'])
 
                 if not success:
                     flash(error_str)
@@ -245,10 +248,10 @@ def upload_sample_file():
                     f.seek(1)
                     f.write(file.filename + '\n')
                 f.close()
-                file.save(os.path.join(app.config['STORAGE_PATH'], file.filename))
+                file.save(os.path.join(app.config['STORAGE_PATH'], session.get('username') + '_' + file.filename))
                 # flash('File successfully uploaded')
-                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], file.filename))
-                session['samplefile'] = os.path.join(app.config['STORAGE_PATH'], file.filename)
+                success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get('username') + '_' + file.filename))
+                session['samplefile'] = os.path.join(app.config['STORAGE_PATH'], session.get('username') + '_' + file.filename)
                 if not success:
                     flash(error_str)
                     if log is None or clus_dict is None:
