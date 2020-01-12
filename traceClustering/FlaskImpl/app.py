@@ -11,6 +11,7 @@ app.config['SAMPLE_FORMAT'] = ['csv']
 app.secret_key = "secret key"
 app.config['OUTPUT'] = "output/"
 
+
 def replaceSample(filename, newsample):
     """
     replace the oldest sample with the new one
@@ -34,16 +35,10 @@ def find_samples(filename):
     f = open(filename, "r")
     f.readline()
     names = []
-    first = f.readline()
-    if first:
-        names.append(first)
-    second = f.readline()
-    if second:
-        names.append(second)
-    third = f.readline()
-    if third:
-        names.append(third)
+    data = f.readlines()
     f.close()
+    for d in data:
+        names.append(d)
     return names
 
 
@@ -225,33 +220,17 @@ def upload_sample_file():
                 return redirect(request.url)
             if file and allowed_sample_file(file.filename):
                 name = app.config['STORAGE_PATH'] + session.get('username') + ".txt"
-                f = open(name, "r")
-                f.seek(0)
-                f.readline()
-                s1 = f.readline()
-                s2 = f.readline()
-                s3 = f.readline()
-                f.close()
-                f = open(name, "a")
-                f.seek(0)
-                filename = file.filename + '\n'
-                # only write name to file if it is not existing else just store file
-                if filename != s1 and filename != s2 and filename != s3:
-                    if s1:
-
-                        if s2:
-                            if s3:
-                                replaceSample(name, file.filename)
-                            else:
-                                f.seek(3)
-                                f.write(file.filename + '\n')
-                        else:
-                            f.seek(2)
-                            f.write(file.filename + '\n')
-                    else:
-                        f.seek(1)
+                with open(name, "r") as f:
+                    data = f.readlines()
+                    alreadyIn = False
+                    for d in data:
+                        if d == file.filename + '\n':
+                            alreadyIn = True
+                            flash("This filename has already been used. The old file was overwritten")
+                if not alreadyIn:
+                    with open(name, "a") as f:
                         f.write(file.filename + '\n')
-                f.close()
+
                 file.save(os.path.join(app.config['STORAGE_PATH'], session.get('username') + '_' + file.filename))
                 # flash('File successfully uploaded')
                 success, error_str, clus_dict, cluster_labels, log = check_sample_list(os.path.join(app.config['STORAGE_PATH'], session.get("username") + ".xes"), os.path.join(app.config['STORAGE_PATH'], session.get('username') + '_' + file.filename))
