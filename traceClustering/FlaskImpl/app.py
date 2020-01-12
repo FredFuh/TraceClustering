@@ -59,7 +59,8 @@ def find_projects():
         if f.endswith('.txt'):
             message += f[:-4]
             message += ", "
-    return message
+
+    return message[:-2]
 
 def allowed_log_file(filename):
     """
@@ -308,7 +309,10 @@ def thresholds():
             if req.get("auto_thresh"):
                 auto_thresh = True
 
+
             thresh1 = list(map(float, req.getlist("threshold1")))
+            print(thresh1)
+
             #thresh1[:] = [val / 100 for val in thresh1]
             thresh2 = list(map(float, req.getlist("threshold2")))
             #thresh2[:] = [val / 100 for val in thresh2]

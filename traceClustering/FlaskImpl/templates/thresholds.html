@@ -48,18 +48,18 @@ div#loading {
 		<label for="relativeSupport" class="float-left">0.0</label>
 		<label for="relativeSupport" class="float-right">1.0</label>
     </div>
+    <br>
 	<div class="form-group">
-		<input type="checkbox" id="autothresh" value="True" name="auto_thresh" autocomplete="off" style="margin-left:-20px">
-		<label for="autothresh">Use automatically determined threshold values? If checked, values entered below are ignored. (Warning: This increases computation time.)</label>
+		<input type="checkbox" id="autothresh" name="auto_thresh" autocomplete="off">
+		<label for="autothresh" class="checkbox-inline">Use automatically determined threshold values? If checked, values entered below are ignored. (Warning: This increases computation time.)</label>
     </div>
 
-	<br>
 	{% for cluster in cluster_labels %}
-	
+
+	<br>	
 	<h2>For cluster: {{cluster}}</h2>
 
 	<div class="form-group">
-		<br>
     	<label for="{{cluster}}_threshold1">Relative Threshold 1: </label>
 		<output id="{{cluster}}_threshold1_out" for="{{cluster}}_threshold1" readonly style="border:0; color:#000000; font-weight:bold;">0.5</output>
 		<input type="range" class="custom-range thresholdInp" id="{{cluster}}_threshold1" oninput="myFunction(this.id)" min="0" max="1" value="0.5" step="0.01" placeholder="Threshold" name="threshold1" autocomplete="off" required>		
@@ -107,6 +107,27 @@ outRelativeSupport.value = relativeSupport.value;
 relativeSupport.oninput = function() {
   outRelativeSupport.value = this.value;
 }
+
+
+var checkbox = document.getElementById("autothresh");
+
+function validator() {
+	if (checkbox.checked == true) {
+		var sliders = document.getElementsByClassName('thresholdInp')
+		for (var i = 0; i < sliders.length; i++) {
+		   sliders[i].setAttribute("disabled", "true");
+		}
+	} else {
+		console.log("false")
+		var sliders = document.getElementsByClassName('thresholdInp')
+		console.log(sliders)
+		for (var i = 0; i < sliders.length; i++) {
+		   sliders[i].removeAttribute("disabled");
+		}
+	}
+}
+
+checkbox.addEventListener('click', validator);
 
 
 </script>
