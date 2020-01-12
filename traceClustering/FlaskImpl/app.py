@@ -233,20 +233,23 @@ def upload_sample_file():
                 f.close()
                 f = open(name, "a")
                 f.seek(0)
-                if s1:
+                filename = file.filename + '\n'
+                # only write name to file if it is not existing else just store file
+                if filename != s1 and filename != s2 and filename != s3:
+                    if s1:
 
-                    if s2:
-                        if s3:
-                            replaceSample(name, file.filename)
+                        if s2:
+                            if s3:
+                                replaceSample(name, file.filename)
+                            else:
+                                f.seek(3)
+                                f.write(file.filename + '\n')
                         else:
-                            f.seek(3)
+                            f.seek(2)
                             f.write(file.filename + '\n')
                     else:
-                        f.seek(2)
+                        f.seek(1)
                         f.write(file.filename + '\n')
-                else:
-                    f.seek(1)
-                    f.write(file.filename + '\n')
                 f.close()
                 file.save(os.path.join(app.config['STORAGE_PATH'], session.get('username') + '_' + file.filename))
                 # flash('File successfully uploaded')
