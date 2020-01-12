@@ -22,7 +22,7 @@
 <form method="POST" action="/log" enctype="multipart/form-data">
 	<div class="form-group">
 		<div class="custom-file">
-			<input type="file" name="file" autocomplete="off" class="custom-file-input">
+			<input type="file" name="file" autocomplete="off" id="myInput" class="custom-file-input">
 			<label class="custom-file-label" for="image">Select log...</label>
 		</div>
 	</div>
@@ -31,5 +31,15 @@
 	  <button type="submit" class="btn btn-primary" name="skip" value="Skip">Skip (Use already uploaded file)</button>
 	{% endif %}
 </form>
+
+
+<script>
+document.querySelector('.custom-file-input').addEventListener('change',function(e){
+  var fileName = document.getElementById("myInput").files[0].name;
+  var nextSibling = e.target.nextElementSibling
+  nextSibling.innerText = fileName
+})
+</script>
+
 {% endblock %}
 
