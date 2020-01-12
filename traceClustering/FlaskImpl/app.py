@@ -95,6 +95,7 @@ def home():
             # create txt file
             file = open(app.config['STORAGE_PATH'] + req.get("username")+ ".txt", "a+")
             file.seek(0)
+            file.close()
             logname = file.readline()
             if logname:
                 print("logname:", logname)
