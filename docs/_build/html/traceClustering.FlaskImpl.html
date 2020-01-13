@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>traceClustering.FlaskImpl package &#8212; TraceClustering 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="traceclustering-flaskimpl-package">
+<h1>traceClustering.FlaskImpl package<a class="headerlink" href="#traceclustering-flaskimpl-package" title="Permalink to this headline">¶</a></h1>
+<p>This package has dependencies to the main module in this project.</p>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-traceClustering.FlaskImpl.app">
+<span id="traceclustering-flaskimpl-app-module"></span><h2>traceClustering.FlaskImpl.app module<a class="headerlink" href="#module-traceClustering.FlaskImpl.app" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.about">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">about</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.about" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.allowed_log_file">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">allowed_log_file</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.allowed_log_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks if given file has correct type for log
+:param filename: name of the file to check
+:return: boolean: file has valid type</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.allowed_sample_file">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">allowed_sample_file</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.allowed_sample_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks if given file has correct type for sample
+:param filename: name of file to check
+:return: boolean: file has valid type</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.download_csv">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">download_csv</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.download_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>send cluster csv file as download
+GET
+——-</p>
+<blockquote>
+<div><p>:return cluster csv file</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.download_xes">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">download_xes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.download_xes" title="Permalink to this definition">¶</a></dt>
+<dd><p>send clustered xes file as download
+GET
+——-</p>
+<blockquote>
+<div><p>:return clustered xes file</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.find_projects">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">find_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.find_projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>list all currently created (with a stored xes file) projects
+:returns</p>
+<blockquote>
+<div><p>String of project names</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.find_samples">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">find_samples</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.find_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.home">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">home</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide Landing Page to enter the Project name
+GET
+——-</p>
+<blockquote>
+<div><dl class="simple">
+<dt>:returns</dt><dd><p>landing page</p>
+</dd>
+</dl>
+</div></blockquote>
+<blockquote>
+<div><dl class="simple">
+<dt>:returns</dt><dd><p>Upload log page</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.replaceSample">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">replaceSample</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">newsample</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.replaceSample" title="Permalink to this definition">¶</a></dt>
+<dd><p>replace the oldest sample with the new one
+:param filename:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.signout">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">signout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.signout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.thresholds">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">thresholds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>provide page to calculate thresholds and performs the clustering.
+For more information on the clustering algorithm refer to backend documentation.</p>
+</div></blockquote>
+<blockquote>
+<div><p>perform clustering algorithm
+:return redirect to download page showing measurements and fsps</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.upload_log_file">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">upload_log_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.upload_log_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>provides page to upload log if user already has project
+POST
+——-</p>
+<blockquote>
+<div><p>store file and
+:return redirect to upload sample page</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.FlaskImpl.app.upload_sample_file">
+<code class="sig-prename descclassname">traceClustering.FlaskImpl.app.</code><code class="sig-name descname">upload_sample_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.FlaskImpl.app.upload_sample_file" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>provides page to upload sample if user already has project</p>
+</div></blockquote>
+<blockquote>
+<div><p>store file and
+:return redirect to select thresholds page</p>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-traceClustering.FlaskImpl">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-traceClustering.FlaskImpl" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Anand Kumaraguru, Ajay Pandi, Frederik Fuhrmann, Daniel Schleiz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/traceClustering.FlaskImpl.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

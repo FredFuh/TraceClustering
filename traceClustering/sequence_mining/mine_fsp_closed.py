@@ -3,18 +3,6 @@ from enum import Enum
 
 # Mining closed frequent items sets using a slightly simplified version of the CloFAST algorithm, due to abusing the fact that our itemsets are always of cardinality 1.
 def mine_fsp_closed(sdb, min_sup):
-    ''' 
-    Mines the frequent sequent patterns (fsp's) of length 1 and the closed fsp's for the given SequenceDB. A simplified version of the algorithm CloFAST is implemented,
-    with the major simplification being that itemsets of sequences from the SequenceDB always have exactly one element. Similar nomenclature to in the paper is used.
-    The respective output fsp's are organized in lists of tuples, where the first entry is the fsp and the second is its absolute support.
-    
-    Args: 
-        sdb (SequenceDB): The SequenceDB object
-        min_sup (int): The absolute minimum support of a frequent sequence pattern
-    
-    Returns:
-        [((int), int)], [((int), int)]: Returns two list of tuples, representing the fsp's of length 1 and the closed ones. A tuple's first entry is the fsp which is a tuple, while the second is the absolute support.
-    '''
     """
     Mines the frequent sequent patterns (fsp's) of length 1 and the closed fsp's for the given SequenceDB. A simplified version of the algorithm CloFAST is implemented,
     with the major simplification being that itemsets of sequences from the SequenceDB always have exactly one element. Similar nomenclature as in the paper is used.
@@ -22,18 +10,25 @@ def mine_fsp_closed(sdb, min_sup):
 
     Parameters
     -----------
-    sdb (SequenceDB)
+    sdb : SequenceDB
         SequenceDB object
-    min_sup (int)
+    min_sup : int
         The absolute minimum support of a frequent sequence pattern
 
     Returns
     -----------
-    cfi ([((int), int)])
+    cfi : [((int), int)]
         Closed frequent itemsets, which correspond to fsp's of length 1 due to our assumptions.
-    cfsp ([((int), int)])
+    cfsp : [((int), int)]
         Closed fsp's.
     
+    Examples
+    -----------
+    >>> tracelist = [['a', 'b', 'c', 'd'],['a', 'b', 'c'],['b', 'c']]
+    >>> sdb = SequenceDB()
+    >>> sdb.initialise_db(tracelist) # Create and initialise the sequence database object
+    >>> print(sdb.activity_to_idx) # Mapping from activities to integer indices
+    >>> fsp1, fspc = mine_fsp_closed(sdb, 10)
     """
     # First build up the sparse id lists (sil) for all 1-itemsets, organised as [[Int]] where an activity index serves as the index to its id list in the sil
     # In contrast to the paper, the sil's store indices of activities (0 indexed) and not positions which start at 1
@@ -79,14 +74,14 @@ def build_sils(db, num_activities):
 
     Parameters
     -----------
-    db ([[int]])
+    db : [[int]]
         Sequence database in the form of the list of sequences
-    num_activities (int)
+    num_activities : int
         Number of different activities in the sequence database
         
     Returns
     -----------
-    sils ([[[int]]])
+    sils : [[[int]]]
         List of sil's for each 1-itemset. A sil of type [[int]] is the list of indices of an activity, indexed by the sequence index in the sequence database
     """
     # In contrast to the paper, the sil's store indices of activities (0 indexed) and not positions which start at 1
@@ -156,7 +151,7 @@ def vil_compute_support(vil):
 
     Parameters
     -----------
-    vil (list)
+    vil : list
         List of activity indices.
 
     Returns
@@ -283,7 +278,7 @@ def sequence_closure(vil, vil_list, sils, alpha):
         List of vertical id lists for prefixes of sequence alpha.
     sils
         List of sparse id lists for each activity
-    alpha ([int])
+    alpha : [int]
         Sequence of activities.
 
     Returns
@@ -318,10 +313,10 @@ def shiftSC(vilj, vilj_list, sils, alpha_suffix, j):
 
     Parameters
     -----------
-    vilj (int)
+    vilj : int
         Index of the end of the subsequence in the sequence with index j.
 
-    vilj_list ([int])
+    vilj_list : [int]
         List of vil values for sequence with index j for the subsequences of alpha.
 
     sils
@@ -330,7 +325,7 @@ def shiftSC(vilj, vilj_list, sils, alpha_suffix, j):
     alpha_suffix
         Suffix of the sequence alpha to be checked.
 
-    j (int)
+    j : int
         Index of the sequence in the database.
 
     Returns

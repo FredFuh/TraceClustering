@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>traceClustering.sample_log package &#8212; TraceClustering 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="traceclustering-sample-log-package">
+<h1>traceClustering.sample_log package<a class="headerlink" href="#traceclustering-sample-log-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-traceClustering.sample_log.sample">
+<span id="traceclustering-sample-log-sample-module"></span><h2>traceClustering.sample_log.sample module<a class="headerlink" href="#module-traceClustering.sample_log.sample" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="traceClustering.sample_log.sample.create_sample_logs">
+<code class="sig-prename descclassname">traceClustering.sample_log.sample.</code><code class="sig-name descname">create_sample_logs</code><span class="sig-paren">(</span><em class="sig-param">clus_dict</em>, <em class="sig-param">cluster_labels</em>, <em class="sig-param">log</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sample_log.sample.create_sample_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build separate logs with traces corresponding to each cluster</p>
+<p>Input: Dictionary output of check_sample_list(), EventLog object</p>
+<p>Output: List of sample logs as EventLog objects</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sample_log.sample.read_sample_list">
+<code class="sig-prename descclassname">traceClustering.sample_log.sample.</code><code class="sig-name descname">read_sample_list</code><span class="sig-paren">(</span><em class="sig-param">log_path</em>, <em class="sig-param">csv_path</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sample_log.sample.read_sample_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the log and csv file containing clustering information, then checks if all the given cases exist in the log and creates a dictionary mapping cluster labels to a list of case ids.
+CSV file format:</p>
+<blockquote>
+<div><p>file[][0] = case id 
+file[][1] = cluster</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log_path</strong></dt><dd><p>Path to the XES log file</p>
+</dd>
+<dt><strong>csv_path</strong></dt><dd><p>Path to the csv file containing clustering information for the sample sets</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>clus_dict</strong><span class="classifier">dict</span></dt><dd><p>Dictionary using the cluster labels as keys and the corresponding list of case ids as values.</p>
+</dd>
+<dt><strong>cluster_labels</strong><span class="classifier">list</span></dt><dd><p>The labels of the clusters used in the csv file</p>
+</dd>
+<dt><strong>missing_cases</strong><span class="classifier">list</span></dt><dd><p>Case ids which are contained in the csv file but not in the log</p>
+</dd>
+<dt>log</dt><dd><p>EventLog object</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sample_log.sample.write_sample_logs_to_fs">
+<code class="sig-prename descclassname">traceClustering.sample_log.sample.</code><code class="sig-name descname">write_sample_logs_to_fs</code><span class="sig-paren">(</span><em class="sig-param">clus_dict</em>, <em class="sig-param">filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sample_log.sample.write_sample_logs_to_fs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build separate logs with traces corresponding to each cluster and write them to the filesystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>clus_dict</strong><span class="classifier">dict</span></dt><dd><p>Dictionary using the cluster labels as keys and the corresponding list of case ids as values.</p>
+</dd>
+<dt><strong>filepath</strong></dt><dd><p>Path to the XES log file</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-traceClustering.sample_log">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-traceClustering.sample_log" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Anand Kumaraguru, Ajay Pandi, Frederik Fuhrmann, Daniel Schleiz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/traceClustering.sample_log.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

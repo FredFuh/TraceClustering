@@ -14,7 +14,6 @@ def read_sample_list(log_path, csv_path):
                 file[][0] = case id 
                 file[][1] = cluster
 
-
     Parameters
     -----------
     log_path
@@ -24,11 +23,11 @@ def read_sample_list(log_path, csv_path):
 
     Returns
     -----------
-    clus_dict (dict)
+    clus_dict : dict
         Dictionary using the cluster labels as keys and the corresponding list of case ids as values.
-    cluster_labels (list)
+    cluster_labels : list
         The labels of the clusters used in the csv file
-    missing_cases (list)
+    missing_cases : list
         Case ids which are contained in the csv file but not in the log
     log
         EventLog object
@@ -61,7 +60,7 @@ def write_sample_logs_to_fs(clus_dict, filepath):
 
     Parameters
     -----------
-    clus_dict (dict)
+    clus_dict : dict
         Dictionary using the cluster labels as keys and the corresponding list of case ids as values.
     filepath
         Path to the XES log file
@@ -90,16 +89,16 @@ def create_sample_logs(clus_dict, cluster_labels, log):
 
     Parameters
     -----------
-    clus_dict (dict)
+    clus_dict : dict
         Dictionary using the cluster labels as keys and the corresponding list of case ids as values.
-    cluster_labels (list)
+    cluster_labels : list
         The labels of the clusters to be discovered
     log
         EventLog object
 
     Returns
     -----------
-    sample_logs (list)
+    sample_logs : list
         List of EventLog objects
     """
     sample_logs = []

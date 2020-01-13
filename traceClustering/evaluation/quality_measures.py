@@ -8,14 +8,14 @@ def compute_cluster_quality_measures(clustered_log, sample_logs, cluster_labels)
     -----------
     clustered_log
         EventLog object
-    sample_logs (list)
+    sample_logs : list
         List of EventLog objects
-    cluster_labels ([str])
+    cluster_labels : [str]
         List of cluster labels.
 
     Returns
     -----------
-    measures (dict)
+    measures : dict
         Dictionary mapping a cluster label to the tuple of measurements where
             recall -> Estimated recall
             precision -> Estimated precision
@@ -51,7 +51,7 @@ def compute_precision_and_recall(clustered_log, sample_log, cluster_size, cluste
         EventLog object
     sample_log
         EventLog object
-    cluster_size (int)
+    cluster_size : int
         Number of traces in the cluster.
     cluster_label
         Label of the cluster

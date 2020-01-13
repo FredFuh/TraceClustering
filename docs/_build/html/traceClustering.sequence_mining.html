@@ -1,0 +1,580 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>traceClustering.sequence_mining package &#8212; TraceClustering 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="traceclustering-sequence-mining-package">
+<h1>traceClustering.sequence_mining package<a class="headerlink" href="#traceclustering-sequence-mining-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-traceClustering.sequence_mining.mine_fsp">
+<span id="traceclustering-sequence-mining-mine-fsp-module"></span><h2>traceClustering.sequence_mining.mine_fsp module<a class="headerlink" href="#module-traceClustering.sequence_mining.mine_fsp" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp.get_first_larger_element_or_none">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp.</code><code class="sig-name descname">get_first_larger_element_or_none</code><span class="sig-paren">(</span><em class="sig-param">lst</em>, <em class="sig-param">bound</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp.get_first_larger_element_or_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first element of a list that is larger then the given bound, or None if such an element does not exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>lst</strong><span class="classifier">[int]</span></dt><dd><p>List</p>
+</dd>
+<dt><strong>bound</strong><span class="classifier">int</span></dt><dd><p>Minimum bound value</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>item</strong><span class="classifier">int</span></dt><dd><p>The first larger element to be found, or None</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp.mine_fsp">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp.</code><code class="sig-name descname">mine_fsp</code><span class="sig-paren">(</span><em class="sig-param">log</em>, <em class="sig-param">min_sup</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp.mine_fsp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mines the frequent sequent patterns (fsp’s) of length 1,2 and the closed fsp’s for the given event log and minimum support.
+The respective fsp’s are organized in lists of tuples, where the first entry is the fsp and the second is its absolute support.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>EventLog object</p>
+</dd>
+<dt><strong>min_sup</strong><span class="classifier">int</span></dt><dd><p>Absolute minimum support value</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>fsp_1</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Fsp’s of length 1</p>
+</dd>
+<dt><strong>fsp_2</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Fsp’s of length 2</p>
+</dd>
+<dt><strong>fsp_c</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Closed fsp’s</p>
+</dd>
+<dt>sdb</dt><dd><p>SequenceDB object created during the mining</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp.mine_fsp_2">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp.</code><code class="sig-name descname">mine_fsp_2</code><span class="sig-paren">(</span><em class="sig-param">sdb</em>, <em class="sig-param">min_sup</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp.mine_fsp_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mines the frequent sequence patterns of length 2 given a log in sequence database representation and the absolute minimum support.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sdb</strong></dt><dd><p>SequenceDB object</p>
+</dd>
+<dt><strong>min_sup</strong><span class="classifier">int</span></dt><dd><p>Absolute minimum support value</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>fsp_2</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Fsp’s of length 2</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp.mine_fsp_from_sample">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp.</code><code class="sig-name descname">mine_fsp_from_sample</code><span class="sig-paren">(</span><em class="sig-param">log</em>, <em class="sig-param">min_sup</em>, <em class="sig-param">training_set_fraction=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp.mine_fsp_from_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mines the frequent sequent patterns (fsp’s) of length 1,2 and the closed fsp’s for the given sample log and minimum support.
+The fsp’s are computed on the first traces of a fraction of the given log, which can be set as a parameter.
+The respective fsp’s are organized in lists of tuples, where the first entry is the fsp and the second is its absolute support.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>EventLog object</p>
+</dd>
+<dt><strong>min_sup</strong><span class="classifier">int</span></dt><dd><p>Relative minimum support value between 0 and 1 used for sequence mining</p>
+</dd>
+<dt><strong>training_set_fraction (float</strong></dt><dd><p>Fraction of the number of traces to be used for sequence mining</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>fsp_1</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Fsp’s of length 1</p>
+</dd>
+<dt><strong>fsp_2</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Fsp’s of length 2</p>
+</dd>
+<dt><strong>fsp_c</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Closed fsp’s</p>
+</dd>
+<dt>sdb</dt><dd><p>SequenceDB object created during the mining</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mine_fsp_from_sample</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="n">training_set_fraction</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sdb</span><span class="o">.</span><span class="n">db</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span> <span class="c1"># prints first 5 sequences in their integer representation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cluster 1 fsp_1: &#39;</span><span class="p">,</span> <span class="n">cluster_fsps</span><span class="p">[</span><span class="n">cluster_label</span><span class="p">][</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span> <span class="c1"># first 3 fsps of length 1 for cluster with name &#39;cluster_label&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cluster 1 fsp_2: &#39;</span><span class="p">,</span> <span class="n">cluster_fsps</span><span class="p">[</span><span class="n">cluster_label</span><span class="p">][</span><span class="mi">1</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span> <span class="c1"># first 3 fsps of length 2 for cluster with name &#39;cluster_label&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cluster 1 fsp_c: &#39;</span><span class="p">,</span> <span class="n">cluster_fsps</span><span class="p">[</span><span class="n">cluster_label</span><span class="p">][</span><span class="mi">2</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span> <span class="c1"># first 3 fsps of length 2 for cluster with name &#39;cluster_label&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-traceClustering.sequence_mining.mine_fsp_closed">
+<span id="traceclustering-sequence-mining-mine-fsp-closed-module"></span><h2>traceClustering.sequence_mining.mine_fsp_closed module<a class="headerlink" href="#module-traceClustering.sequence_mining.mine_fsp_closed" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Label">
+<em class="property">class </em><code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">Label</code><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Label.CLOSED">
+<code class="sig-name descname">CLOSED</code><em class="property"> = 0</em><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Label.CLOSED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Label.NONCLOSED">
+<code class="sig-name descname">NONCLOSED</code><em class="property"> = 1</em><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Label.NONCLOSED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Label.PRUNED">
+<code class="sig-name descname">PRUNED</code><em class="property"> = 2</em><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Label.PRUNED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Node">
+<em class="property">class </em><code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">Node</code><span class="sig-paren">(</span><em class="sig-param">seq</em>, <em class="sig-param">vil</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for representing a CSET, where each node has a reference to its child and parent nodes.</p>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 62%" />
+<col style="width: 38%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>add_child</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_children</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>set_label</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>set_parent</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Node.add_child">
+<code class="sig-name descname">add_child</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">node</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Node.add_child" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Node.get_children">
+<code class="sig-name descname">get_children</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Node.get_children" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Node.set_label">
+<code class="sig-name descname">set_label</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">label</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Node.set_label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.Node.set_parent">
+<code class="sig-name descname">set_parent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">parent_node</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.Node.set_parent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.build_sils">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">build_sils</code><span class="sig-paren">(</span><em class="sig-param">db</em>, <em class="sig-param">num_activities</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.build_sils" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs the sparse id lists (sil’s) of every 1-itemset for a given sequence database and the number of activities num_activities, assuming the activities in the database are 0,..,num_activities-1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>db</strong><span class="classifier">[[int]]</span></dt><dd><p>Sequence database in the form of the list of sequences</p>
+</dd>
+<dt><strong>num_activities</strong><span class="classifier">int</span></dt><dd><p>Number of different activities in the sequence database</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>sils</strong><span class="classifier">[[[int]]]</span></dt><dd><p>List of sil’s for each 1-itemset. A sil of type [[int]] is the list of indices of an activity, indexed by the sequence index in the sequence database</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.check_closure_and_prune">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">check_closure_and_prune</code><span class="sig-paren">(</span><em class="sig-param">node</em>, <em class="sig-param">sils</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.check_closure_and_prune" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for the sequence closure property as described in the CloFAST paper for the sequence stored in node and prunes the CSET if possible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>node</strong></dt><dd><p>Node object</p>
+</dd>
+<dt><strong>sils</strong></dt><dd><p>List of sparse id lists for each activity</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.get_closed_fsp_from_cset">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">get_closed_fsp_from_cset</code><span class="sig-paren">(</span><em class="sig-param">node</em>, <em class="sig-param">lst</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.get_closed_fsp_from_cset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traverses a CSET which is given by its root node and appends them to the given list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>node</strong></dt><dd><p>Node object representing the root of the CSET.</p>
+</dd>
+<dt><strong>lst</strong></dt><dd><p>List</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.get_first_item_or_none">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">get_first_item_or_none</code><span class="sig-paren">(</span><em class="sig-param">lst</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.get_first_item_or_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first itemof a list or None if the list is empty</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>lst</strong></dt><dd><p>List</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>item</dt><dd><p>First element of the list, or None.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.mine_fsp_closed">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">mine_fsp_closed</code><span class="sig-paren">(</span><em class="sig-param">sdb</em>, <em class="sig-param">min_sup</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.mine_fsp_closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mines the frequent sequent patterns (fsp’s) of length 1 and the closed fsp’s for the given SequenceDB. A simplified version of the algorithm CloFAST is implemented,
+with the major simplification being that itemsets of sequences from the SequenceDB always have exactly one element. Similar nomenclature as in the paper is used.
+The respective output fsp’s are organized in lists of tuples, where the first entry is the fsp and the second is its absolute support.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sdb</strong><span class="classifier">SequenceDB</span></dt><dd><p>SequenceDB object</p>
+</dd>
+<dt><strong>min_sup</strong><span class="classifier">int</span></dt><dd><p>The absolute minimum support of a frequent sequence pattern</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>cfi</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Closed frequent itemsets, which correspond to fsp’s of length 1 due to our assumptions.</p>
+</dd>
+<dt><strong>cfsp</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Closed fsp’s.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tracelist</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">],[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sdb</span> <span class="o">=</span> <span class="n">SequenceDB</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sdb</span><span class="o">.</span><span class="n">initialise_db</span><span class="p">(</span><span class="n">tracelist</span><span class="p">)</span> <span class="c1"># Create and initialise the sequence database object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sdb</span><span class="o">.</span><span class="n">activity_to_idx</span><span class="p">)</span> <span class="c1"># Mapping from activities to integer indices</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fsp1</span><span class="p">,</span> <span class="n">fspc</span> <span class="o">=</span> <span class="n">mine_fsp_closed</span><span class="p">(</span><span class="n">sdb</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.sequence_closure">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">sequence_closure</code><span class="sig-paren">(</span><em class="sig-param">vil</em>, <em class="sig-param">vil_list</em>, <em class="sig-param">sils</em>, <em class="sig-param">alpha</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.sequence_closure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the sequence closure predicate as described in the CloFAST paper for all sequences in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>vil</strong></dt><dd><p>Vertical id list for an activity.</p>
+</dd>
+<dt><strong>vil_list</strong></dt><dd><p>List of vertical id lists for prefixes of sequence alpha.</p>
+</dd>
+<dt><strong>sils</strong></dt><dd><p>List of sparse id lists for each activity</p>
+</dd>
+<dt><strong>alpha</strong><span class="classifier">[int]</span></dt><dd><p>Sequence of activities.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>pred</dt><dd><p>True if the shiftSC holds for all sequences.</p>
+</dd>
+<dt>virt_shift</dt><dd><p>True if a virtual shift was used.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.sequence_extension">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">sequence_extension</code><span class="sig-paren">(</span><em class="sig-param">node</em>, <em class="sig-param">min_sup</em>, <em class="sig-param">sils</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.sequence_extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the sequence extension step as shown in the paper of CloFAST. Performs this for the sequence represented in a given node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>node</strong></dt><dd><p>Node object</p>
+</dd>
+<dt><strong>min_sup</strong></dt><dd><p>Absolute minimum support value</p>
+</dd>
+<dt><strong>sils</strong></dt><dd><p>Sparse id lists for each activity id.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.shiftSC">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">shiftSC</code><span class="sig-paren">(</span><em class="sig-param">vilj</em>, <em class="sig-param">vilj_list</em>, <em class="sig-param">sils</em>, <em class="sig-param">alpha_suffix</em>, <em class="sig-param">j</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.shiftSC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the sequence closure predicate as described in the CloFAST paper for the sequence with index j.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>vilj</strong><span class="classifier">int</span></dt><dd><p>Index of the end of the subsequence in the sequence with index j.</p>
+</dd>
+<dt><strong>vilj_list</strong><span class="classifier">[int]</span></dt><dd><p>List of vil values for sequence with index j for the subsequences of alpha.</p>
+</dd>
+<dt><strong>sils</strong></dt><dd><p>List of sparse id lists for each activity</p>
+</dd>
+<dt><strong>alpha_suffix</strong></dt><dd><p>Suffix of the sequence alpha to be checked.</p>
+</dd>
+<dt><strong>j</strong><span class="classifier">int</span></dt><dd><p>Index of the sequence in the database.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>pred</dt><dd><p>True if the shiftSC holds.</p>
+</dd>
+<dt>shifted</dt><dd><p>True if a virtual shift was used.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.mine_fsp_closed.vil_compute_support">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.mine_fsp_closed.</code><code class="sig-name descname">vil_compute_support</code><span class="sig-paren">(</span><em class="sig-param">vil</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.mine_fsp_closed.vil_compute_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the absolute support from a vertical id list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>vil</strong><span class="classifier">list</span></dt><dd><p>List of activity indices.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>support</dt><dd><p>Support value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-traceClustering.sequence_mining.sequenceDB">
+<span id="traceclustering-sequence-mining-sequencedb-module"></span><h2>traceClustering.sequence_mining.sequenceDB module<a class="headerlink" href="#module-traceClustering.sequence_mining.sequenceDB" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="traceClustering.sequence_mining.sequenceDB.SequenceDB">
+<em class="property">class </em><code class="sig-prename descclassname">traceClustering.sequence_mining.sequenceDB.</code><code class="sig-name descname">SequenceDB</code><a class="headerlink" href="#traceClustering.sequence_mining.sequenceDB.SequenceDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#traceClustering.sequence_mining.sequenceDB.SequenceDB.initialise_db" title="traceClustering.sequence_mining.sequenceDB.SequenceDB.initialise_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_db</span></code></a>(self, tracelist)</p></td>
+<td><p>Initialises the sequence representation of a log with additional bookkeeping like mapping from activity names to integers.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="traceClustering.sequence_mining.sequenceDB.SequenceDB.initialise_db">
+<code class="sig-name descname">initialise_db</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">tracelist</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.sequenceDB.SequenceDB.initialise_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialises the sequence representation of a log with additional bookkeeping like mapping from activity names to integers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tracelist</strong><span class="classifier">[[str]]</span></dt><dd><p>List of traces, where a trace is a list of strings.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.sequenceDB.apply_sdb_mapping_to_log">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.sequenceDB.</code><code class="sig-name descname">apply_sdb_mapping_to_log</code><span class="sig-paren">(</span><em class="sig-param">log</em>, <em class="sig-param">sdb</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.sequenceDB.apply_sdb_mapping_to_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the mapping from activities to indices of the given SequenceDB to an event log, and returns it as a list of sequences of activity indices.
+If the log contains an activity not known to the SequenceDB, it is assigned the index -1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>EventLog object</p>
+</dd>
+<dt><strong>sdb</strong></dt><dd><p>SequenceDB object</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>db</strong><span class="classifier">[[int]]</span></dt><dd><p>List of sequences with activities in their integer representation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.sequenceDB.log_to_sdb">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.sequenceDB.</code><code class="sig-name descname">log_to_sdb</code><span class="sig-paren">(</span><em class="sig-param">log</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.sequenceDB.log_to_sdb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the input EventLog into a SequenceDB object, which stores the sequence database as [[int]].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>EventLog object</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>sdb</dt><dd><p>SequenceDB object</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.sequence_mining.sequenceDB.log_to_tracelist">
+<code class="sig-prename descclassname">traceClustering.sequence_mining.sequenceDB.</code><code class="sig-name descname">log_to_tracelist</code><span class="sig-paren">(</span><em class="sig-param">log</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.sequence_mining.sequenceDB.log_to_tracelist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the input EventLog into a list of list of activities corresponding to traces in the log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>EventLog object</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>tracelist</strong><span class="classifier">[[str]]</span></dt><dd><p>List of traces, where a trace is a list of strings.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="traceclustering-sequence-mining-test-module">
+<h2>traceClustering.sequence_mining.test module<a class="headerlink" href="#traceclustering-sequence-mining-test-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-traceClustering.sequence_mining">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-traceClustering.sequence_mining" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Anand Kumaraguru, Ajay Pandi, Frederik Fuhrmann, Daniel Schleiz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/traceClustering.sequence_mining.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

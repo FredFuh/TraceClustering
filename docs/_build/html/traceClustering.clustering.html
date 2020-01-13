@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>traceClustering.clustering package &#8212; TraceClustering 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="traceclustering-clustering-package">
+<h1>traceClustering.clustering package<a class="headerlink" href="#traceclustering-clustering-package" title="Permalink to this headline">¶</a></h1>
+<p>This package has dependencies to the sequence_mining package in this project.</p>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-traceClustering.clustering.cluster">
+<span id="traceclustering-clustering-cluster-module"></span><h2>traceClustering.clustering.cluster module<a class="headerlink" href="#module-traceClustering.clustering.cluster" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.apply_clustering_to_log">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">apply_clustering_to_log</code><span class="sig-paren">(</span><em class="sig-param">log</em>, <em class="sig-param">clustering</em>, <em class="sig-param">csvcluster</em>, <em class="sig-param">cluster_label</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.apply_clustering_to_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given partial clustering for one cluster, writes the cluster label into the cluster trace attribute in the given log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>EventLog object</p>
+</dd>
+<dt><strong>clustering</strong><span class="classifier">[int]</span></dt><dd><p>The clustering list containing 0 and 1 values indicating whether a trace was assigned to the cluster or not.</p>
+</dd>
+<dt><strong>csvcluster</strong></dt><dd><p>List, which will be appended with tuples of case id and assigned cluster.</p>
+</dd>
+<dt><strong>cluster_label</strong></dt><dd><p>Label of the discovered cluster.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.apply_reverse_sdb_mapping_to_sequences">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">apply_reverse_sdb_mapping_to_sequences</code><span class="sig-paren">(</span><em class="sig-param">fsp_1</em>, <em class="sig-param">fsp_2</em>, <em class="sig-param">fsp_c</em>, <em class="sig-param">sdb</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.apply_reverse_sdb_mapping_to_sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the sets of frequent sequence patterns from activities in their integer representation to the original string representation as saved in the sequence database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fsp_1, fsp_2, fsp_c</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Fsp’s of length 1,2 or closed with their appropriate absolute support during mining, in integer representation.</p>
+</dd>
+<dt><strong>sdb</strong></dt><dd><p>SequenceDB object</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>transf_fsp_1, transf_fsp_2, transf_fsp_c ([((str), int)]</dt><dd><p>Fsp’s of length 1,2 or closed with their appropriate absolute support during mining, in string representation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.cluster_log">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">cluster_log</code><span class="sig-paren">(</span><em class="sig-param">log</em>, <em class="sig-param">sample_logs</em>, <em class="sig-param">cluster_labels</em>, <em class="sig-param">min_sup</em>, <em class="sig-param">lthresh_1</em>, <em class="sig-param">lthresh_2</em>, <em class="sig-param">lthresh_clo</em>, <em class="sig-param">auto_thresh=False</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.cluster_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives and event log and a list of (disjoint) sample logs which represent sample traces from clusters to be discovered and returns the input log containing the computed clustering information.
+The assigned cluster for each trace is stored as in the trace attribute ‘cluster’. If the trace attribute existed before in the log, its values will be overwritten. The clusters names are
+1,…,len(sample_logs). Traces which could not be assigned to a cluster have the cluster value 0. The clusters are discovered in the order of the sample logs. For frequent sequence pattern discovery,
+min_sup describes the relative minimum support. The parameter lists lthresh_1, lthresh_2, lthresh_clo contain the thresholds to score the traces for each cluster.
+If the auto_thresh argument is set to True, then lthresh_1, lthresh_2, lthresh_clo are ignored and the (heuristically) optimal threshold values are determined, which could greatly increase computation time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>The EventLog object</p>
+</dd>
+<dt><strong>sample_logs</strong></dt><dd><p>The list of EventLog objects representing the sample lists</p>
+</dd>
+<dt><strong>cluster_labels</strong><span class="classifier">list</span></dt><dd><p>The list of cluster labels, assuming the cluster label 0 is not used</p>
+</dd>
+<dt><strong>min_sup</strong><span class="classifier">int</span></dt><dd><p>The relative minimum support for fsp discovery</p>
+</dd>
+<dt><strong>lthresh_1, lthresh_2, lthresh_clo</strong><span class="classifier">[float]</span></dt><dd><p>Thresholds for each cluster for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain</p>
+</dd>
+<dt><strong>auto_thresh</strong><span class="classifier">bool</span></dt><dd><p>Boolean indicating whether automatically set thresholds should be used</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>clustered_log</dt><dd><p>EventLog object containing cluster information. Traces which were not assigned to a cluster have the cluster attribute 0</p>
+</dd>
+<dt><strong>clustercsvlist</strong><span class="classifier">[(str, int)]</span></dt><dd><p>List of case id’s and the cluster they belong to</p>
+</dd>
+<dt><strong>cluster_fsps</strong><span class="classifier">dict(cluster_label:([((str), int)], [((str), int)], [((str), int)]))</span></dt><dd><p>Dictionary containing the fsp’s for each cluster. The cluster name serves as the key. A corresponding value for a cluster is a tuple of length 3 where the
+first entry contains the fsp’s of length 1, the second of length 2 and the third the closed ones. Each set of fsp’s is a list containing tuples with the a sequence as the first element
+and its absolute support in the sample set as the second element. A sequence is a tuple with strings as its elements corresponding to activity names in the original log.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clustered_log</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">cluster_fsps</span> <span class="o">=</span> <span class="n">cluster_log</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">sample_logs</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">],</span> <span class="n">min_sup</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">auto_thresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Since auto_thresh option is enabled, the threshold values given as parameters are ignored</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">clustered_log</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">clustered_log</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;cluster&#39;</span><span class="p">])</span> <span class="c1"># Traces now contain cluster attribute</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cluster 1 fsp_1: &#39;</span><span class="p">,</span> <span class="n">cluster_fsps</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span> <span class="c1"># first 3 fsps</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cluster 1 fsp_2: &#39;</span><span class="p">,</span> <span class="n">cluster_fsps</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cluster 1 fsp_c: &#39;</span><span class="p">,</span> <span class="n">cluster_fsps</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.compute_partial_clustering">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">compute_partial_clustering</code><span class="sig-paren">(</span><em class="sig-param">log</em>, <em class="sig-param">sample_log</em>, <em class="sig-param">min_sup</em>, <em class="sig-param">thresh_1</em>, <em class="sig-param">thresh_2</em>, <em class="sig-param">thresh_clo</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.compute_partial_clustering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a partial clustering as an array of 0-1 values, 1 means the trace at that index of the array is in the cluster. Also returns the mined fsp’s as ([((str), int)], [((str), int)], [((str), int)])), see explanation in the cluster_log function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>The EventLog object</p>
+</dd>
+<dt><strong>sample_log</strong></dt><dd><p>The EventLog object representing the sample log for the cluster to be discovered</p>
+</dd>
+<dt><strong>min_sup</strong><span class="classifier">int</span></dt><dd><p>The relative minimum support for fsp discovery</p>
+</dd>
+<dt><strong>thresh_1, thresh_2, thresh_clo</strong><span class="classifier">float</span></dt><dd><p>Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>clustering</strong><span class="classifier">[int]</span></dt><dd><p>The resulting clustering</p>
+</dd>
+<dt><strong>fsps</strong><span class="classifier">dict(cluster_label:([((str), int)], [((str), int)], [((str), int)]))</span></dt><dd><p>FSP’s that were discovered for that cluster.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.compute_partial_clustering_auto_thresholds">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">compute_partial_clustering_auto_thresholds</code><span class="sig-paren">(</span><em class="sig-param">log</em>, <em class="sig-param">sample_log</em>, <em class="sig-param">min_sup</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.compute_partial_clustering_auto_thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a partial clustering as an array of 0-1 values, 1 means the trace at that index of the array is in the cluster. Also returns the mined fsp’s as ([((str), int)], [((str), int)], [((str), int)])), see explanation in the cluster_log function.
+Optimal thresholds are automatically determined, which increases computation time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>The EventLog object</p>
+</dd>
+<dt><strong>sample_log</strong></dt><dd><p>The EventLog object representing the sample log for the cluster to be discovered</p>
+</dd>
+<dt><strong>min_sup</strong><span class="classifier">int</span></dt><dd><p>The relative minimum support for fsp discovery</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>best_clustering</strong><span class="classifier">[int]</span></dt><dd><p>The resulting clustering</p>
+</dd>
+<dt><strong>fsps</strong><span class="classifier">dict(cluster_label:([((str), int)], [((str), int)], [((str), int)]))</span></dt><dd><p>FSP’s that were discovered for that cluster.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.compute_prefix_vils">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">compute_prefix_vils</code><span class="sig-paren">(</span><em class="sig-param">seq</em>, <em class="sig-param">n</em>, <em class="sig-param">sils</em>, <em class="sig-param">vils_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.compute_prefix_vils" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the vertical id lists of all prefixes with length at least n+1 of a given sequence, assuming the vil for prefix of length n has been computed. The vil’s are read from and stored in vils_dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>seq</strong></dt><dd><p>Activity sequence.</p>
+</dd>
+<dt><strong>n</strong></dt><dd><p>Given prefix length for which vil was already computed.</p>
+</dd>
+<dt><strong>sils</strong></dt><dd><p>List of sparse id lists.</p>
+</dd>
+<dt><strong>vils_dict</strong><span class="classifier">dict</span></dt><dd><p>Dictionary with sequences as keys and the respective vil’s as values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.concat_logs">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">concat_logs</code><span class="sig-paren">(</span><em class="sig-param">logs</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.concat_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates given event logs into one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>logs</strong><span class="classifier">list</span></dt><dd><p>List of EventLog objects</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>res</dt><dd><p>Resulting EventLog object of concatenated logs</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.get_clustering_from_scores">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">get_clustering_from_scores</code><span class="sig-paren">(</span><em class="sig-param">scores_1</em>, <em class="sig-param">scores_2</em>, <em class="sig-param">scores_clo</em>, <em class="sig-param">thresh_1</em>, <em class="sig-param">thresh_2</em>, <em class="sig-param">thresh_clo</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.get_clustering_from_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the partial clustering vector of 0 (not in the cluster) and 1 (in the cluster) values for given thresholds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scores_1, scores_2, scores_clo</strong><span class="classifier">[int]</span></dt><dd><p>Scores for each sequence for fsp’s of length 1, 2 or closed ones.</p>
+</dd>
+<dt><strong>thresh_1, thresh_2, thresh_clo</strong><span class="classifier">float</span></dt><dd><p>Thresholds for scoring the traces and assigning to clusters, fraction of sequence patterns a trace must contain</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>clustering</strong><span class="classifier">[int]</span></dt><dd><p>List of 0 and 1 values indicating whether the trace at a given index belongs to the cluster.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.get_sequence_scores">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">get_sequence_scores</code><span class="sig-paren">(</span><em class="sig-param">db</em>, <em class="sig-param">num_activities</em>, <em class="sig-param">fsp_1</em>, <em class="sig-param">fsp_2</em>, <em class="sig-param">fsp_c</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.get_sequence_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the score for each fsp in the given database, which is the number of fsp’s each sequence of the db contains.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>db</strong><span class="classifier">[[int]]</span></dt><dd><p>List of sequences with activities as integers.</p>
+</dd>
+<dt><strong>num_activities</strong><span class="classifier">int</span></dt><dd><p>Number of different activities.</p>
+</dd>
+<dt><strong>fsp_1, fsp_2, fsp_c</strong><span class="classifier">[((int), int)]</span></dt><dd><p>Fsp’s of length 1,2 or closed with their appropriate absolute support during mining.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>scores_1</strong><span class="classifier">[int]</span></dt><dd><p>Scores for each sequence for fsp’s of length 1.</p>
+</dd>
+<dt><strong>scores_2</strong><span class="classifier">[int]</span></dt><dd><p>Scores for each sequence for fsp’s of length 2.</p>
+</dd>
+<dt><strong>scores_c</strong><span class="classifier">[int]</span></dt><dd><p>Scores for each sequence for closed fsp’s.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.longest_common_prefix_length">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">longest_common_prefix_length</code><span class="sig-paren">(</span><em class="sig-param">tup1</em>, <em class="sig-param">tup2</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.longest_common_prefix_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the length of the longest common prefix of two tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tup1</strong></dt><dd><p>Tuple</p>
+</dd>
+<dt><strong>tup2</strong></dt><dd><p>Tuple</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>count</strong><span class="classifier">int</span></dt><dd><p>Length of the longest common prefix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="traceClustering.clustering.cluster.split_log_on_cluster_attribute">
+<code class="sig-prename descclassname">traceClustering.clustering.cluster.</code><code class="sig-name descname">split_log_on_cluster_attribute</code><span class="sig-paren">(</span><em class="sig-param">log</em><span class="sig-paren">)</span><a class="headerlink" href="#traceClustering.clustering.cluster.split_log_on_cluster_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a given log into two sublogs based on the cluster trace attribute. Seperates clustered traces from not yet clustered ones indicated by the cluster attribute having value 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>log</strong></dt><dd><p>EventLog object</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>log1</dt><dd><p>EventLog object of traces which are assigned to a cluster.</p>
+</dd>
+<dt>log2</dt><dd><p>EventLog object of traces not assigned to a cluster yet.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="traceclustering-clustering-test-module">
+<h2>traceClustering.clustering.test module<a class="headerlink" href="#traceclustering-clustering-test-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-traceClustering.clustering">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-traceClustering.clustering" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Anand Kumaraguru, Ajay Pandi, Frederik Fuhrmann, Daniel Schleiz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/traceClustering.clustering.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

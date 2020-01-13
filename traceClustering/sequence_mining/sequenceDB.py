@@ -19,7 +19,7 @@ class SequenceDB:
     
         Parameters
         -----------
-        tracelist ([[str]])
+        tracelist : [[str]]
             List of traces, where a trace is a list of strings.
         """
         # Determine the set of activities
@@ -48,7 +48,7 @@ def log_to_tracelist(log):
 
     Returns
     -----------
-    tracelist ([[str]])
+    tracelist : [[str]]
         List of traces, where a trace is a list of strings.
     """
     tracelist = [[event['concept:name'] for event in trace] for trace in log]
@@ -89,7 +89,7 @@ def apply_sdb_mapping_to_log(log, sdb):
 
     Returns
     -----------
-    db ([[int]])
+    db : [[int]]
         List of sequences with activities in their integer representation.
     
     """

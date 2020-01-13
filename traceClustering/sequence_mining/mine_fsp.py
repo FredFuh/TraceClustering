@@ -12,16 +12,16 @@ def mine_fsp(log, min_sup):
     -----------
     log
         EventLog object
-    min_sup (int)
+    min_sup : int
         Absolute minimum support value
 
     Returns
     -----------
-    fsp_1 ([((int), int)])
+    fsp_1 : [((int), int)]
         Fsp's of length 1
-    fsp_2 ([((int), int)])
+    fsp_2 : [((int), int)]
         Fsp's of length 2
-    fsp_c ([((int), int)])
+    fsp_c : [((int), int)]
         Closed fsp's
     sdb
         SequenceDB object created during the mining
@@ -43,12 +43,12 @@ def mine_fsp_2(sdb, min_sup):
     -----------
     sdb
         SequenceDB object
-    min_sup (int)
+    min_sup : int
         Absolute minimum support value
 
     Returns
     -----------
-    fsp_2 ([((int), int)])
+    fsp_2 : [((int), int)]
         Fsp's of length 2
 
     """
@@ -96,14 +96,14 @@ def get_first_larger_element_or_none(lst, bound):
 
     Parameters
     -----------
-    lst ([int])
+    lst : [int]
         List
-    bound (int)
+    bound : int
         Minimum bound value
 
     Returns
     -----------
-    item (int)
+    item : int
         The first larger element to be found, or None
     
     """
@@ -125,21 +125,29 @@ def mine_fsp_from_sample(log, min_sup, training_set_fraction=0.5):
     -----------
     log
         EventLog object
-    min_sup (int)
+    min_sup : int
         Relative minimum support value between 0 and 1 used for sequence mining
-    training_set_fraction (float)
+    training_set_fraction (float
         Fraction of the number of traces to be used for sequence mining
 
     Returns
     -----------
-    fsp_1 ([((int), int)])
+    fsp_1 : [((int), int)]
         Fsp's of length 1
-    fsp_2 ([((int), int)])
+    fsp_2 : [((int), int)]
         Fsp's of length 2
-    fsp_c ([((int), int)])
+    fsp_c : [((int), int)]
         Closed fsp's
     sdb
         SequenceDB object created during the mining
+
+    Examples
+    -----------
+    >>> mine_fsp_from_sample(log, 0.7, training_set_fraction=0.5)
+    >>> print(sdb.db[:5]) # prints first 5 sequences in their integer representation
+    >>> print('cluster 1 fsp_1: ', cluster_fsps[cluster_label][0][:3]) # first 3 fsps of length 1 for cluster with name 'cluster_label'
+    >>> print('cluster 1 fsp_2: ', cluster_fsps[cluster_label][1][:3]) # first 3 fsps of length 2 for cluster with name 'cluster_label'
+    >>> print('cluster 1 fsp_c: ', cluster_fsps[cluster_label][2][:3]) # first 3 fsps of length 2 for cluster with name 'cluster_label'
     """
     training_set_size = ceil(len(log)*training_set_fraction)
     min_sup_abs = ceil(training_set_size * min_sup)
