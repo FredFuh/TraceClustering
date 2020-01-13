@@ -95,8 +95,8 @@ def home():
             # create txt file
             file = open(app.config['STORAGE_PATH'] + req.get("username")+ ".txt", "a+")
             file.seek(0)
-            file.close()
             logname = file.readline()
+            file.close()
             if logname:
                 print("logname:", logname)
                 return render_template('log.html', log_uploaded_before=True, logname=logname)
